@@ -1,5 +1,6 @@
 from bson import ObjectId
-from pydantic import BaseConfig, BaseModel as PydanticBaseModel, Field
+from pydantic import BaseConfig, Field
+from pydantic import BaseModel as PydanticBaseModel
 
 
 class BaseModel(PydanticBaseModel):

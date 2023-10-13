@@ -14,7 +14,7 @@ class ObjectId(BsonObjectId):
         # __modify_schema__ should mutate the dict it receives in place,
         # the returned value will be ignored
         field_schema.update(
-            pattern="^[a-f\d]{24}$",
+            pattern=r"^[a-f\d]{24}$",
             examples=["5e7f31f47a6ed536d130eb78", "5e7f31fcb0a9b40374bc2c91"],
             type="string",
         )
