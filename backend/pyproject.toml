@@ -20,3 +20,20 @@ ruff = "^0.0.277"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 89
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+select = ["A", "B", "E", "F", "W", "I", "C90", "COM", "N", "UP", "YTT", "ASYNC", "S", "RUF", "FLY", "TRY", "PL"]
+ignore = ["A002", "A003", "S101", "S104", "PLR0913", "RUF012"]
+line-length = 89
+target-version = "py311"
+
+[tool.ruff.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends", "fastapi.Query", "fastapi.params.Query"]
