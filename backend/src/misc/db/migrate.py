@@ -2,8 +2,8 @@ import asyncio
 from collections import defaultdict
 import json
 
-from backend.src.db.models.city_area import CityArea
-from backend.src.db.repositories.city_area import CityAreaRepository
+from src.db.models.city_area import CityArea
+from src.db.repositories.city_area import CityAreaRepository
 from db.models.object_density import ObjectDensity
 from db.models.osm_objects import ObjectType
 from db.repositories.object_density import ObjectDensityRepository
@@ -17,7 +17,7 @@ async def migrate_areas() -> list[CityArea]:
         areas_json = json.load(file)
     docs = [CityArea(city=city, area=area) for city, area in areas_json.items()]
     repository = CityAreaRepository()
-    await repository.insert_many(docs)
+    # await repository.insert_many(docs)
     return docs
 
 
@@ -49,8 +49,8 @@ async def migrate_densities(area_by_city: dict[str, float]) -> None:
 
 async def main():
     city_areas = await migrate_areas()
-    await migrate_osm_objects([doc.city for doc in city_areas])
-    await migrate_densities({doc.city: doc.area for doc in city_areas})
+    # await migrate_osm_objects([doc.city for doc in city_areas])
+    # await migrate_densities({doc.city: doc.area for doc in city_areas})
 
 
 if __name__ == "__main__":

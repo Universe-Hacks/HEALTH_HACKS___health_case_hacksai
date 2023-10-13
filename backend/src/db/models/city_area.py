@@ -1,4 +1,4 @@
-from backend.src.db.models.base_model import BaseModel
+from src.db.models.base_model import BaseModel
 
 
 class CityArea(BaseModel):

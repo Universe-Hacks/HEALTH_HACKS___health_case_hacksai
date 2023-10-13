@@ -5,9 +5,9 @@ from motor.core import AgnosticClient, AgnosticCollection, AgnosticDatabase
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.results import InsertManyResult, InsertOneResult, UpdateResult
 
-from backend.settings import settings
-from backend.src.db.models.base_model import BaseModel
-from backend.src.db.types.pydantic_object_id import ObjectId
+from settings import settings
+from src.db.models.base_model import BaseModel
+from src.db.types.pydantic_object_id import ObjectId
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -45,16 +45,25 @@ class BaseRepository(ABC, Generic[T]):
 
     async def insert_many(self, docs: list[T]) -> InsertManyResult:
         return await self.collection.insert_many(
-            documents=[doc.model_dump(by_alias=True, exclude_none=True) for doc in docs], ordered=False,
+            documents=[doc.model_dump(by_alias=True, exclude_none=True) for doc in docs],
+            ordered=False,
         )
 
     async def insert_one(self, doc: T) -> InsertOneResult:
-        return await self.collection.insert_one(document=doc.model_dump(by_alias=True, exclude_none=True))
+        return await self.collection.insert_one(
+            document=doc.model_dump(by_alias=True, exclude_none=True)
+        )
 
     async def update_one(self, doc: T, upsert=False) -> UpdateResult:
         update: dict[str, dict] = {
             "$set": doc.model_dump(exclude={"_id"}, by_alias=True, exclude_none=True),
-            "$unset": {k: True for k, v in doc.model_dump(exclude={"_id"}, by_alias=True).items() if v is None},
+            "$unset": {
+                k: True
+                for k, v in doc.model_dump(exclude={"_id"}, by_alias=True).items()
+                if v is None
+            },
         }
         update: dict[str, dict] = {k: v for k, v in update.items() if v}
-        return await self.collection.update_one(filter={"_id": doc.id}, update=update, upsert=upsert)
+        return await self.collection.update_one(
+            filter={"_id": doc.id}, update=update, upsert=upsert
+        )
