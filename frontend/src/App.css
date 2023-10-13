@@ -1,0 +1,53 @@
+.wrapper {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.home__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 200px;
+    padding: 0 20px;
+}
+
+.leaflet-container {
+    height: 60vh;
+    width: 50%;
+    border-radius: 2rem;
+}
+
+.home__city-picker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.home__city-add {
+    margin-left: 100px;
+}
+
+.home__city-map {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+    min-width: 100%;
+}
+
+.custom-select {
+    width: 150px;
+}
+
+.home__city-statistics {
+    min-width: 550px;
+    margin-left: 50px;
+}
+
+.home__city-descr {
+    margin-top: 50px;
+}
