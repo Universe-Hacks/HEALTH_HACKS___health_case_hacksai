@@ -13,6 +13,7 @@ async def main():
         await insert_elements(elements.negative, ObjectType.NEGATIVE, city_name)
         await insert_elements(elements.studies, ObjectType.STUDY, city_name)
 
+
 async def clear_mongo():
     osm_repo = OSMObjectsRepository()
     await osm_repo.collection.delete_many({})
