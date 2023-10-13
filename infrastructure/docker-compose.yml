@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   backend_server:
-    build: ./backend
+    build: ../backend
     command: uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload
     container_name: application_server
     environment:
@@ -44,7 +44,6 @@ services:
       - '5672:5672'
       - '15672:15672'
 
-
 volumes:
   frontend:
     driver: local
@@ -56,9 +55,9 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ../db_data
+      device: ./db_data
       o: bind
 
 configs:
   nginx_config:
-    file: nginx/reverse_proxy.conf
+    file: ./nginx/reverse_proxy.conf
