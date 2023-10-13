@@ -10,6 +10,7 @@ python = "^3.11"
 fastapi = "0.103.1"
 uvicorn = "^0.22.0"
 pydantic-settings = "2.0.3"
+osmpythontools = "^0.3.5"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
