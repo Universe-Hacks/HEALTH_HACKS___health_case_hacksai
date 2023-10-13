@@ -5,6 +5,8 @@ services:
     build: ../backend
     command: uvicorn src.asgi:app --host 0.0.0.0 --port 8000 --reload
     container_name: application_server
+    ports:
+      - 8000:8000
     environment:
       PROJECT_NAME: $PROJECT_NAME
   
