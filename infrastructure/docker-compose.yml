@@ -3,7 +3,7 @@ version: '3.3'
 services:
   backend_server:
     build: ../backend
-    command: uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn src.asgi:app --host 0.0.0.0 --port 8000 --reload
     container_name: application_server
     environment:
       PROJECT_NAME: $PROJECT_NAME
