@@ -6,8 +6,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.results import InsertManyResult, InsertOneResult, UpdateResult
 
 from backend.settings import settings
-from src.db.models.base_model import BaseModel
-from src.db.types.pydantic_object_id import ObjectId
+from backend.src.db.models.base_model import BaseModel
+from backend.src.db.types.pydantic_object_id import ObjectId
 
 T = TypeVar("T", bound=BaseModel)
 
