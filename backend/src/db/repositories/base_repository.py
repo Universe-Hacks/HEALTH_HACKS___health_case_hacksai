@@ -6,8 +6,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.results import InsertManyResult, InsertOneResult, UpdateResult
 
 from backend.settings import settings
-from backend.src.common.db.models.base_model import BaseModel
-from backend.src.common.db.types.pydantic_object_id import ObjectId
+from src.db.models.base_model import BaseModel
+from src.db.types.pydantic_object_id import ObjectId
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -28,7 +28,7 @@ class BaseRepository(ABC, Generic[T]):
     collection: AgnosticCollection
 
     def __init__(self):
-        self.client = AsyncIOMotorClient(settings.MONGO_ML_URI)
+        self.client = AsyncIOMotorClient(settings.MONGO_URI)
         self.database = self.client[self.database_name]
         self.collection = self.database[self.collection_name]
 
