@@ -13,6 +13,7 @@ services:
     container_name: nginx_proxy
     volumes:
       - frontend:/var/www/
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/logs:/var/log/nginx
     configs:
       - nginx_config
@@ -57,7 +58,3 @@ volumes:
       type: none
       device: ./db_data
       o: bind
-
-configs:
-  nginx_config:
-    file: ./nginx/reverse_proxy.conf
