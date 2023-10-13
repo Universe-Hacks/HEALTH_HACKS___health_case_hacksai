@@ -1,0 +1,82 @@
+version: '3.3'
+
+services:
+  backend_server:
+    build: ./backend
+    command: uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload
+    container_name: application_server
+    environment:
+      PROJECT_NAME: $PROJECT_NAME
+    deploy:
+      mode: replicated
+      replicas: 3
+      resources:
+        limits:
+          cpus: 500m
+          memory: 512M
+        reservations:
+          cpus: 250m
+          memory: 256M    
+  
+  reverse_proxy:
+    image: nginx:1.21.6
+    container_name: nginx_proxy
+    volumes:
+      - frontend:/var/www/
+      - ./nginx/logs:/var/log/nginx
+    configs:
+      - nginx_config
+    ports:
+      - 80:80
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+    deploy:
+      resources:
+        limits:
+          cpus: 500m
+          memory: 512M
+        reservations:
+          cpus: 250m
+          memory: 256M
+    depends_on:
+      - backend_server
+
+  mongodb:
+    image: mongo:7.0.2
+    container_name: mongodb
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - 27017:27017
+
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - 6379:6379
+
+  rabbitmq:
+    image: 'rabbitmq:3.6-management-alpine'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
+
+volumes:
+  frontend:
+    driver: local
+    driver_opts:
+      type: none
+      device: ../frontend
+      o: bind
+  mongodb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ../db_data
+      o: bind
+
+configs:
+  nginx_config:
+    file: nginx/reverse_proxy.conf
