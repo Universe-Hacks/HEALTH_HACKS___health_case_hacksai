@@ -52,7 +52,6 @@ function MapLeaflet(props: MapLeafletProps) {
   console.log(items, 'gis22')
 
   const markerIcon = new L.Icon({
-    iconUrl: require("resources/images/marker.png"),
     iconSize: [40, 40],
     iconAnchor: [17, 46],
     popupAnchor: [0, -46],
