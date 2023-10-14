@@ -17,7 +17,7 @@ async def migrate_areas() -> list[CityArea]:
         areas_json = json.load(file)
     docs = [CityArea(city=city, area=area) for city, area in areas_json.items()]
     repository = CityAreaRepository()
-    # await repository.insert_many(docs)
+    await repository.insert_many(docs)
     return docs
 
 
