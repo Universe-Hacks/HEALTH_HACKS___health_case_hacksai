@@ -1,5 +1,5 @@
-from src.schemas.v1.base import BaseSchema
 from src.db.models.osm_objects import ObjectType
+from src.schemas.v1.base import BaseSchema
 
 
 class CoordinateSchema(BaseSchema):

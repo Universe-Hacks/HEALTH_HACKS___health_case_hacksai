@@ -3,7 +3,6 @@ import json
 import logging
 
 from src.misc.migrator.pipelines.dencities import DensitiesMigrationPipeline
-from src.misc.migrator.pipelines.osm_object import OSMObjectsMigrationPipeline
 
 logger = logging.getLogger(__name__)
 

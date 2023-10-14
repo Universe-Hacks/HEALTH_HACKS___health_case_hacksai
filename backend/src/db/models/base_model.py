@@ -1,8 +1,7 @@
 from datetime import datetime
 
 from bson import ObjectId
-from pydantic import BaseConfig, Field
-from pydantic import BaseModel as PydanticBaseModel
+from pydantic import BaseConfig, BaseModel as PydanticBaseModel, Field
 
 truncated_utcnow = lambda: datetime.utcnow().replace(microsecond=0)  # noqa: E731
 

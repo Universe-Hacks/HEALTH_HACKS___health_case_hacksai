@@ -98,6 +98,23 @@ class DensitiesMigrationPipeline:
             cities_coordinates[city] = city_coord
         return cities_coordinates
 
+    @staticmethod
+    async def _get_districts_coordinates(
+        cities: list[str],
+    ) -> dict[str, dict[str, list[dict[str, float]]]]:
+        result = {}
+        for city in cities:
+            districts_coordinates = {
+                district["tags"]["name"]: [
+                    coords
+                    for member in district["members"]
+                    for coords in member["geometry"]
+                ]
+                for district in [r._json for r in OSMParser.parse_regions(city)]
+            }
+            result[city] = districts_coordinates
+        return result
+
     async def execute(
         self,
         area_by_city: dict[str, float],
@@ -105,6 +122,9 @@ class DensitiesMigrationPipeline:
     ) -> None:
         print("Migrating densities")
         tags = ["amenity", "shop", "leisure", "highway"]
+        districts_coordinates = await self._get_districts_coordinates(
+            list(area_by_city.keys())
+        )
         tag_densities_city = await self._get_tag_densities_city(area_by_city, tags)
         type_densities_city = await self._get_type_densities_city(area_by_city)
         tag_districts_by_city = await self._get_tag_districts_by_city(
@@ -137,6 +157,13 @@ class DensitiesMigrationPipeline:
                             **type_districts_by_city[city][district]
                         ),
                         positivity_rate=positivity_by_district[city][district],
+                        polygon_coordinates=[
+                            OSMCoordinate(
+                                latitude=coord["lat"],
+                                longitude=coord["lon"],
+                            )
+                            for coord in districts_coordinates[city][district]
+                        ],
                         negative_points_overflow=(
                             await self.metrics_service.calculate_negative_points_overflow(
                                 city, district

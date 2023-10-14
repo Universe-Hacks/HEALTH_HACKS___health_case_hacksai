@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from src.routers.v1 import router as v1_router
 from src.routers.status import router as status_router
+from src.routers.v1 import router as v1_router
 
 
 def build_routers() -> APIRouter:
