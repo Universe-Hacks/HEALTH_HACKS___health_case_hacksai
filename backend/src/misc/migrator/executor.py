@@ -1,61 +1,15 @@
 import asyncio
-from collections import defaultdict
 import json
 import logging
+from collections import defaultdict
 
 from src.db.models.city.city_model import CityModel, ObjectDensity, TypeDensity
 from src.db.models.city.district import DistrictModel
-from src.db.models.osm_objects import ObjectType
 from src.db.repositories.city import CityRepository
 from src.db.repositories.osm_objects import OSMObjectsRepository
-from src.misc.db.utils.insert_elements import insert_elements
-from src.misc.db.utils.parse_elements import parse_elements, parse_regions
-from src.misc.gis.dto import CoordinateDTO
-from src.misc.gis.polygons import PolygonUtils
+from src.misc.migrator.pipelines.osm_object import OSMObjectsMigrationPipeline
 
 logger = logging.getLogger(__name__)
-
-
-async def migrate_osm_objects(cities: list[str]):
-    print("Migrating osm objects")
-    for city_name in cities:
-        print(f"Migrating {city_name}")
-        elements = parse_elements(city_name)
-        regions = parse_regions(city_name)
-        for region in regions:
-            region_polygon = PolygonUtils.build_polygon_from_element(region)
-            pos_list, neg_list, study_list = [], [], []
-            for element in elements.positive:
-                if region_polygon.contains_element(element):
-                    pos_list.append(element)
-            for element in elements.negative:
-                if region_polygon.contains_element(element):
-                    neg_list.append(element)
-            for element in elements.studies:
-                if region_polygon.contains_element(element):
-                    study_list.append(element)
-
-            try:
-                await insert_elements(
-                    elements=pos_list,
-                    elements_type=ObjectType.POSITIVE,
-                    city_name=city_name,
-                    region_name=region.tag("name"),
-                )
-                await insert_elements(
-                    elements=neg_list,
-                    elements_type=ObjectType.NEGATIVE,
-                    city_name=city_name,
-                    region_name=region.tag("name"),
-                )
-                await insert_elements(
-                    elements=study_list,
-                    elements_type=ObjectType.STUDY,
-                    city_name=city_name,
-                    region_name=region.tag("name"),
-                )
-            except TypeError:
-                print(f"Error! No elements for {city_name}")
 
 
 async def migrate_densities(
@@ -147,8 +101,8 @@ async def main():
     with open("areas_hack.json") as file:
         areas_json = json.load(file)
 
-    await migrate_osm_objects(list(areas_json.keys()))
-    await migrate_densities(areas_json, district_areas)
+    await OSMObjectsMigrationPipeline().execute(city_names=list(areas_json.keys()))
+    # await migrate_densities(areas_json, district_areas)
 
 
 if __name__ == "__main__":

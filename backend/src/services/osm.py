@@ -157,5 +157,13 @@ class OSMService:
             """,
         )
 
+    def get_city(self, city_name: str) -> Any:
+        return self.overpass.query(
+            f"""
+            node["place"="city"]["name"="{city_name}"];
+            out center;
+            """
+        )
+
 
 InjectOSMService: TypeAlias = Annotated[OSMService, Depends()]
