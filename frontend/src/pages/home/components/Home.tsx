@@ -1,17 +1,16 @@
 import type {DescriptionsProps} from 'antd';
-import {Button, Card, Col, Descriptions, Layout, Statistic} from 'antd';
-import {ArrowDownOutlined, ArrowUpOutlined} from '@ant-design/icons';
+import {Button, Descriptions, Layout} from 'antd';
 import CityPicker from "../../../modules/pickerCity/components/CityPicker";
 import {useEffect, useState} from "react";
 import {Data, DataCities} from "../../../modules/pickerCity/types";
 import axios from 'axios';
+import HomeStatistics from "./inner/HomeStatistics";
 import {MapContainer} from "react-leaflet";
 import MapLeaflet from "../../../modules/map/components/MapLeaflet";
 
+const {Header, Footer} = Layout;
+
 function Home() {
-
-  const {Header, Footer, Sider, Content} = Layout;
-
   const headerStyle: React.CSSProperties = {
     textAlign: 'left',
     display: 'flex',
@@ -23,22 +22,6 @@ function Home() {
     backgroundColor: '#eaeeef',
   };
 
-  const contentStyle: React.CSSProperties = {
-    textAlign: 'center',
-    display: 'flex',
-    alignItems: 'center',
-    lineHeight: '120px',
-    paddingInline: 50,
-    color: '#fff',
-    width: '550px',
-    backgroundColor: '#eaeeef',
-  };
-
-  const siderStyle: React.CSSProperties = {
-    lineHeight: '120px',
-    color: '#fff',
-    backgroundColor: '#eaeeef',
-  };
 
   const footerStyle: React.CSSProperties = {
     textAlign: 'center',
@@ -92,6 +75,19 @@ function Home() {
     fetchData();
   }, []);
 
+  const {Content} = Layout;
+
+  const contentStyle: React.CSSProperties = {
+    textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    lineHeight: '120px',
+    paddingInline: 50,
+    color: '#fff',
+    width: '550px',
+    backgroundColor: '#eaeeef',
+  };
+
   return (
     <Layout>
       <Header style={headerStyle}>
@@ -103,7 +99,6 @@ function Home() {
             />
           ) : null
         }
-
         <Button
           style={{
             backgroundColor: '#48773C',
@@ -135,53 +130,20 @@ function Home() {
           Сравнение районов
         </Button>
       </Header>
-      <Layout hasSider>
-        <Content style={contentStyle}>
-          {selectedCities ? (
-            <MapContainer center={[56.839104, 60.60825]} zoom={10}>
-              <MapLeaflet selectedCities={selectedCities}/>
-            </MapContainer>
-          ) : null}
-        </Content>
-        <Sider style={siderStyle}>
-          <Col span={35} style={{marginBottom: '40px'}}>
-            <Card bordered={true}>
-              <Statistic
-                title="Равномерность распределения"
-                value={11.28}
-                precision={2}
-                valueStyle={{color: '#3f8600'}}
-                prefix={<ArrowUpOutlined/>}
-                suffix="%"
-              />
-            </Card>
-          </Col>
-          <Col span={35} style={{marginBottom: '40px'}}>
-            <Card bordered={true}>
-              <Statistic
-                title="Плотность объектов"
-                value={9.3}
-                precision={2}
-                valueStyle={{color: '#cf1322'}}
-                prefix={<ArrowDownOutlined/>}
-                suffix="%"
-              />
-            </Card>
-          </Col>
-          <Col span={35}>
-            <Card bordered={true}>
-              <Statistic
-                title="Минимальное расстояние"
-                value={11.28}
-                precision={2}
-                valueStyle={{color: '#3f8600'}}
-                prefix={<ArrowUpOutlined/>}
-                suffix="%"
-              />
-            </Card>
-          </Col>
-        </Sider>
-      </Layout>
+      {selectedCities ? (
+        <>
+          <Layout hasSider>
+            <Content style={contentStyle}>
+              {selectedCities ? (
+                <MapContainer center={[56.839104, 60.60825]} zoom={10}>
+                  <MapLeaflet selectedCities={selectedCities}/>
+                </MapContainer>
+              ) : null}
+            </Content>
+            <HomeStatistics selectedCities={selectedCities}/>
+          </Layout>
+        </>
+      ) : null}
       <Footer style={footerStyle}>
         <Descriptions style={{fontSize: '20px'}} title="Рекомендации" items={itemsDescriptions}/>
       </Footer>
