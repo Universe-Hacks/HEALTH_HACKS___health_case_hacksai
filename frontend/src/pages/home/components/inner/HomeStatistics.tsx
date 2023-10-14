@@ -47,36 +47,36 @@ function HomeStatistics(props: HomeStatisticsProps) {
         <Col span={35} style={{marginBottom: '40px'}}>
           <Card bordered={true}>
             <Statistic
-              title="Равномерность распределения"
-              value={11.28}
+              title="Плотность позитивных объектов"
+              value={metrics?.by_type.positive}
               precision={2}
-              valueStyle={{color: '#3f8600'}}
-              prefix={<ArrowUpOutlined/>}
-              suffix="%"
+              valueStyle={metrics?.by_type?.positive >= 1.5 ? {color: '#3f8600'} : {color: '#cf1322'}}
+              prefix={metrics?.by_type?.positive >= 1.5 ? <ArrowUpOutlined/> : <ArrowDownOutlined/>}
+              suffix={<>точек/км<sup>2</sup></>}
             />
           </Card>
         </Col>
         <Col span={35} style={{marginBottom: '40px'}}>
           <Card bordered={true}>
             <Statistic
-              title="Плотность позитивных объектов"
-              value={metrics?.by_type.positive}
+              title="Плотность негативных объектов"
+              value={metrics?.by_type?.negative}
               precision={2}
-              valueStyle={metrics?.by_type?.positive >= 1.5 ? {color: '#3f8600'} : {color: '#cf1322'}}
+              valueStyle={{color: '#cf1322'}}
               prefix={<ArrowDownOutlined/>}
-              suffix="%"
+              suffix={<>точек/км<sup>2</sup></>}
             />
           </Card>
         </Col>
         <Col span={35}>
           <Card bordered={true}>
             <Statistic
-              title="Минимальное расстояние"
-              value={11.28}
+              title="Минимальное расстояние от негативной точки до учебного учреждения"
+              value={metrics?.min_negative_point_distance}
               precision={2}
-              valueStyle={{color: '#3f8600'}}
-              prefix={<ArrowUpOutlined/>}
-              suffix="%"
+              valueStyle={metrics?.min_negative_point_distance > 100 ? {color: '#3f8600'} : {color: '#cf1322'}}
+              prefix={metrics?.min_negative_point_distance > 100 ? <ArrowUpOutlined/> : <ArrowDownOutlined/>}
+              suffix="м"
             />
           </Card>
         </Col>
