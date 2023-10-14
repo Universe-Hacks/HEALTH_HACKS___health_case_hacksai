@@ -26,5 +26,5 @@ jobs:
 
       - name: RUN
         env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}  # Используйте значение из сек
+          MONGO_URI: ${{ secrets.MONGO_URI }}
         run: cd infrastructure && docker compose -f ./docker-compose.yml up --build -d backend_server reverse_proxy
