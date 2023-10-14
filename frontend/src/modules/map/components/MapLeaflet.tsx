@@ -1,9 +1,9 @@
 import "leaflet/dist/leaflet.css";
-import {Marker, Popup, TileLayer, useMapEvent} from "react-leaflet";
+import {TileLayer, useMapEvent} from "react-leaflet";
 import {useEffect, useState} from "react";
 import {DataCities, Gis} from "../../pickerCity/types";
 import axios from "axios";
-import L, {LatLngExpression} from "leaflet";
+import {LatLngExpression} from "leaflet";
 
 type MapLeafletProps = {
   selectedCities: DataCities[]
@@ -51,24 +51,17 @@ function MapLeaflet(props: MapLeafletProps) {
 
   console.log(items, 'gis22')
 
-  const markerIcon = new L.Icon({
-    iconSize: [40, 40],
-    iconAnchor: [17, 46],
-    popupAnchor: [0, -46],
-  });
-
-
   return (
     <>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {items ? (
+      {/*  {items ? (
         items.map((city, idx) => (
           <Marker
             position={[city.coordinate.latitude, city.coordinate.longitude]}
-            icon={markerIcon}
+            icon={Marker}
             key={idx}
           >
             <Popup>
@@ -78,7 +71,7 @@ function MapLeaflet(props: MapLeafletProps) {
             </Popup>
           </Marker>
         ))
-      ) : null}
+      ) : null}*/}
     </>
   )
 }
