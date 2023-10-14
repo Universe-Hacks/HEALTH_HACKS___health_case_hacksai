@@ -26,6 +26,7 @@ function CityPicker(props: CityPickerProps) {
     })
 
     setSelectedCities(selectedCity)
+    alert('Кликни на карту для навигации к выбранному городу')
   };
 
   const onSearch = (value: string) => {
