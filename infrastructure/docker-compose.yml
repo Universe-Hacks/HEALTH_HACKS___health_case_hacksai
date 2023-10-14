@@ -31,7 +31,7 @@ services:
     volumes:
       - mongodb_data:/data/db
     env_file:
-      - env.example
+      - .env.example
     ports:
       - 27017:27017
 
