@@ -96,9 +96,9 @@ async def migrate_densities(
 
 
 async def main():
-    with open("areas_by_hacked_city.json") as file:
+    with open("files/areas_by_hacked_city.json") as file:
         district_areas = json.load(file)
-    with open("areas_hack.json") as file:
+    with open("files/areas_hack.json") as file:
         areas_json = json.load(file)
 
     await OSMObjectsMigrationPipeline().execute(city_names=list(areas_json.keys()))
