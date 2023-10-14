@@ -1,7 +1,7 @@
 from typing import Annotated, TypeAlias
 
 from bson.errors import InvalidId
-from fastapi import Depends, Path, HTTPException
+from fastapi import Depends, HTTPException, Path
 
 from src.db.models.city.city_model import CityModel
 from src.db.repositories.city import InjectCityRepository

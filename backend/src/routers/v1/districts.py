@@ -1,7 +1,5 @@
 from fastapi import APIRouter
 
-from src.db.models.city.city_model import CityModel
-from src.db.repositories.city import InjectCityRepository
 from src.depends.city import InjectCityFromPath
 from src.schemas.v1.districts import DistrictWithMetric
 

@@ -1,5 +1,4 @@
 from src.schemas.v1.base import BaseSchema
-from src.schemas.v1.gis import CoordinateSchema
 
 
 class MetricsByTypeSchema(BaseSchema):

@@ -3,10 +3,10 @@ import logging
 
 from OSMPythonTools.element import Element
 
-from src.db.models.osm_objects import ObjectType, OSMCoordinate, OSMObject, OSMMember
+from src.db.models.osm_objects import OSMCoordinate, OSMMember, OSMObject, ObjectType
 from src.db.repositories.osm_objects import OSMObjectsRepository
 from src.misc.gis.polygons import PolygonUtils
-from src.misc.migrator.parser import OSMParser, ElementsDTO
+from src.misc.migrator.parser import ElementsDTO, OSMParser
 
 logger = logging.getLogger(__name__)
 

@@ -1,7 +1,7 @@
 from typing import Annotated, Any, TypeAlias
 
-from fastapi import Depends
 from OSMPythonTools.overpass import Overpass
+from fastapi import Depends
 
 
 class OSMService:
