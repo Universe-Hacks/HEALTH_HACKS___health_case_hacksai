@@ -7,15 +7,15 @@ services:
     container_name: application_server
     ports:
       - 8000:8000
-    env_file:
-      - ../.env
+    environment:
+      MONGO_URI: $MONGO_URI
 
   frontend_build_service:
-     build: ../frontend
-     command: npm run build
-     container_name: frontend_build
-     volumes:
-       - ./frontend/dist:/app/dist
+    build: ../frontend
+    command: npm run build
+    container_name: frontend_build
+    volumes:
+      - ./frontend/dist:/app/dist
 
   reverse_proxy:
     image: nginx:1.21.6
