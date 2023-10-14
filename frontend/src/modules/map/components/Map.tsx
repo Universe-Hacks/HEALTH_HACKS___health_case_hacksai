@@ -5,7 +5,7 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 function Map() {
 
   return (
-    <MapContainer center={[55.7558, 37.6176]} zoom={4}>
+    <MapContainer center={[55.7558, 37.6176]} zoom={10}>
       {/* Установите координаты центра и масштаб так, чтобы охватить Россию */}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

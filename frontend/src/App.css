@@ -14,6 +14,26 @@
     padding: 0 20px;
 }
 
+.comparison__city-back {
+    margin: 40px;
+}
+
+:where(.css-dev-only-do-not-override-amq5gd).ant-descriptions .ant-descriptions-title {
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ant-layout-sider-children {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.leaflet-control-attribution {
+    display: none;
+}
+
 .leaflet-container {
     height: 60vh;
     width: 50%;
@@ -41,6 +61,12 @@
 
 .custom-select {
     width: 150px;
+    height: 48px;
+}
+
+.ant-select-selector:hover,
+.ant-btn-default:hover {
+    border-color: #82a85d !important;
 }
 
 .home__city-statistics {
