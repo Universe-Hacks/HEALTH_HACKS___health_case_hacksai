@@ -6,7 +6,7 @@ from motor.core import AgnosticClient, AgnosticCollection, AgnosticDatabase
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.results import InsertManyResult, InsertOneResult, UpdateResult
 
-from settings import settings
+from src.settings import settings
 from src.db.models.base_model import BaseModel
 from src.db.types.pydantic_object_id import ObjectId
 
