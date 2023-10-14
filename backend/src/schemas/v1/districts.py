@@ -43,6 +43,7 @@ class CoordinatesSchema(BaseSchema):
 
 
 class DistrictWithMetric(BaseSchema):
+    id: str
     name: str
     polygon_coordinates: list[CoordinatesSchema]
     by_type: MetricsByTypeSchema
