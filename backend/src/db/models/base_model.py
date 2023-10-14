@@ -1,10 +1,17 @@
+from datetime import datetime
+
 from bson import ObjectId
 from pydantic import BaseConfig, Field
 from pydantic import BaseModel as PydanticBaseModel
 
+truncated_utcnow = lambda: datetime.utcnow().replace(microsecond=0)  # noqa: E731
+
 
 class BaseModel(PydanticBaseModel):
     id: ObjectId = Field(default_factory=ObjectId, alias="_id")
+
+    created: datetime = Field(default_factory=truncated_utcnow)
+    updated: datetime = Field(default_factory=truncated_utcnow)
 
     def __init__(self, **kwargs):
         """

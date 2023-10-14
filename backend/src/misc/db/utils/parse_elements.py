@@ -24,3 +24,8 @@ def parse_elements(city_name: str) -> ElementsDTO:
         negative=negative_elements,
         studies=studies_elements,
     )
+
+
+def parse_regions(city_name: str) -> list[Element]:
+    osm = OSMService()
+    return osm.get_regions(city_name).elements()

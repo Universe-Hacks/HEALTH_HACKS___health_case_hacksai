@@ -1,11 +1,6 @@
 import math
-from dataclasses import dataclass
 
-
-@dataclass(frozen=True, slots=True)
-class CoordinateDTO:
-    latitude: float
-    longitude: float
+from src.misc.gis.dto import CoordinateDTO
 
 
 def calculate_distance_in_meters(

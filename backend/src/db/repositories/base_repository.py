@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Any, Generic, TypeVar, Union
 
 from motor.core import AgnosticClient, AgnosticCollection, AgnosticDatabase
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.results import InsertManyResult, InsertOneResult, UpdateResult
 
-from settings import settings
+from src.settings import settings
 from src.db.models.base_model import BaseModel
 from src.db.types.pydantic_object_id import ObjectId
 
@@ -32,6 +33,12 @@ class BaseRepository(ABC, Generic[T]):
         self.database = self.client[self.database_name]
         self.collection = self.database[self.collection_name]
 
+    async def _execute_aggregation(self, pipeline: list[dict]) -> list[dict]:
+        docs = []
+        async for doc in self.collection.aggregate(pipeline):
+            docs.append(doc)
+        return docs
+
     async def find(self, _filter: Filter | None = None) -> list[T]:
         docs = []
         async for doc in self.collection.find(filter=_filter):
@@ -51,10 +58,11 @@ class BaseRepository(ABC, Generic[T]):
 
     async def insert_one(self, doc: T) -> InsertOneResult:
         return await self.collection.insert_one(
-            document=doc.model_dump(by_alias=True, exclude_none=True)
+            document=doc.model_dump(by_alias=True, exclude_none=True),
         )
 
     async def update_one(self, doc: T, upsert=False) -> UpdateResult:
+        doc.updated = datetime.utcnow().replace(microsecond=0)
         update: dict[str, dict] = {
             "$set": doc.model_dump(exclude={"_id"}, by_alias=True, exclude_none=True),
             "$unset": {
@@ -65,5 +73,7 @@ class BaseRepository(ABC, Generic[T]):
         }
         update: dict[str, dict] = {k: v for k, v in update.items() if v}
         return await self.collection.update_one(
-            filter={"_id": doc.id}, update=update, upsert=upsert
+            filter={"_id": doc.id},
+            update=update,
+            upsert=upsert,
         )

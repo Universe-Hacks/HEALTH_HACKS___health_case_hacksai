@@ -8,7 +8,7 @@ services:
     ports:
       - 8000:8000
     environment:
-      PROJECT_NAME: $PROJECT_NAME
+      MONGO_URI: $MONGO_URI
   
   reverse_proxy:
     image: nginx:1.21.6
@@ -30,6 +30,8 @@ services:
     container_name: mongodb
     volumes:
       - mongodb_data:/data/db
+    env_file:
+      - .env.example
     ports:
       - 27017:27017
 
@@ -56,5 +58,5 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ./db_data
+      device: ${PWD}/db_data
       o: bind

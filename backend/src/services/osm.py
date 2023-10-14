@@ -145,5 +145,17 @@ class OSMService:
             """,
         )
 
+    def get_regions(self, city_name: str) -> Any:
+        return self.overpass.query(
+            f"""
+                area["name"="{city_name}"]->.searchArea;
+                (
+                 // Выбрать административные границы (районы)
+                  rel(area.searchArea)["boundary"="administrative"]["admin_level"="9"];
+                );
+                out geom;
+            """,
+        )
+
 
 InjectOSMService: TypeAlias = Annotated[OSMService, Depends()]

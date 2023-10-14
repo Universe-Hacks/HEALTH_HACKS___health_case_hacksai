@@ -1,56 +1,154 @@
 import asyncio
 from collections import defaultdict
 import json
+import logging
 
-from src.db.models.city_area import CityArea
-from src.db.repositories.city_area import CityAreaRepository
-from db.models.object_density import ObjectDensity
-from db.models.osm_objects import ObjectType
-from db.repositories.object_density import ObjectDensityRepository
-from db.repositories.osm_objects import OSMObjectsRepository
-from misc.db.utils.insert_elements import insert_elements
-from misc.db.utils.parse_elements import parse_elements
+from src.db.models.city.city_model import CityModel, ObjectDensity, TypeDensity
+from src.db.models.city.district import DistrictModel
+from src.db.models.osm_objects import ObjectType
+from src.db.repositories.city import CityRepository
+from src.db.repositories.osm_objects import OSMObjectsRepository
+from src.misc.db.utils.insert_elements import insert_elements
+from src.misc.db.utils.parse_elements import parse_elements, parse_regions
+from src.misc.gis.dto import CoordinateDTO
+from src.misc.gis.polygons import PolygonUtils
 
-
-async def migrate_areas() -> list[CityArea]:
-    with open("areas.json") as file:
-        areas_json = json.load(file)
-    docs = [CityArea(city=city, area=area) for city, area in areas_json.items()]
-    repository = CityAreaRepository()
-    # await repository.insert_many(docs)
-    return docs
+logger = logging.getLogger(__name__)
 
 
 async def migrate_osm_objects(cities: list[str]):
+    print("Migrating osm objects")
     for city_name in cities:
+        print(f"Migrating {city_name}")
         elements = parse_elements(city_name)
-        try:
-            await insert_elements(elements.positive, ObjectType.POSITIVE, city_name)
-            await insert_elements(elements.negative, ObjectType.NEGATIVE, city_name)
-            await insert_elements(elements.studies, ObjectType.STUDY, city_name)
-        except TypeError:
-            print(f"Error! No elements for {city_name}")
+        regions = parse_regions(city_name)
+        for region in regions:
+            region_polygon = PolygonUtils.build_polygon_from_element(region)
+            pos_list, neg_list, study_list = [], [], []
+            for element in elements.positive:
+                if region_polygon.contains_element(element):
+                    pos_list.append(element)
+            for element in elements.negative:
+                if region_polygon.contains_element(element):
+                    neg_list.append(element)
+            for element in elements.studies:
+                if region_polygon.contains_element(element):
+                    study_list.append(element)
+
+            try:
+                await insert_elements(
+                    elements=pos_list,
+                    elements_type=ObjectType.POSITIVE,
+                    city_name=city_name,
+                    region_name=region.tag("name"),
+                )
+                await insert_elements(
+                    elements=neg_list,
+                    elements_type=ObjectType.NEGATIVE,
+                    city_name=city_name,
+                    region_name=region.tag("name"),
+                )
+                await insert_elements(
+                    elements=study_list,
+                    elements_type=ObjectType.STUDY,
+                    city_name=city_name,
+                    region_name=region.tag("name"),
+                )
+            except TypeError:
+                print(f"Error! No elements for {city_name}")
 
 
-async def migrate_densities(area_by_city: dict[str, float]) -> None:
+async def migrate_densities(
+    area_by_city: dict[str, float],
+    district_areas: dict[str, dict[str, float]],
+) -> None:
+    print("Migrating densities")
     osm_objects_repo = OSMObjectsRepository()
     tags = ["amenity", "shop", "leisure", "highway"]
-    tags_by_city = defaultdict(dict)
+
+    # Fill density_by_object
+    tag_densities_city = defaultdict(dict)
     for tag in tags:
-        for tag_info in await osm_objects_repo.count_tag_by_cities(tag):
+        print(f"Counting {tag}")
+        for tag_info in await osm_objects_repo.count_tag(tag):
             city = tag_info["city"]
-            tags_by_city[city][tag_info[tag]] = tag_info["count"] / area_by_city[city]
+            tag_densities_city[city][tag_info[tag]] = (
+                tag_info["count"] / area_by_city[city]
+            )
+
+    # Fill density_by_type
+    type_densities_city = defaultdict(dict)
+    for type_info in await osm_objects_repo.count_types():
+        city = type_info["city"]
+        type_densities_city[city][type_info["type"]] = (
+            type_info["count"] / area_by_city[city]
+        )
+
+    # Fill density_by_object by district
+    tag_districts_by_city = defaultdict(lambda: defaultdict(dict))
+    for tag in tags:
+        for district_info in await osm_objects_repo.count_tag(tag, by_district=True):
+            city = district_info["city"]
+            district = district_info["district"]
+
+            tag_districts_by_city[city][district][district_info[tag]] = (
+                district_info["count"] / district_areas[city][district]
+            )
+
+    # Fill density_by_type by district
+    type_districts_by_city = defaultdict(lambda: defaultdict(dict))
+    for type_info in await osm_objects_repo.count_types(by_district=True):
+        city = type_info["city"]
+        district = type_info["district"]
+
+        type_districts_by_city[city][district][type_info["type"]] = (
+            type_info["count"] / district_areas[city][district]
+        )
+
+    # Calculate positive rate
+    positivity_by_district = defaultdict(lambda: defaultdict(dict))
+    positivity_info = await osm_objects_repo.calculate_positivity_rate_by_district()
+    for row in positivity_info:
+        city = row["city"]
+        district = row["district"]
+
+        positivity_by_district[city][district] = row["rate"]
+
     docs = [
-        ObjectDensity(city=city, **tags_info) for city, tags_info in tags_by_city.items()
+        CityModel(
+            name=city,
+            area=area,
+            density_by_object=ObjectDensity(**tag_densities_city[city]),
+            density_by_type=TypeDensity(**type_densities_city[city]),
+            districts=[
+                DistrictModel(
+                    name=district,
+                    area=area,
+                    density_by_object=ObjectDensity(
+                        **tag_districts_by_city[city][district]
+                    ),
+                    density_by_type=TypeDensity(
+                        **type_districts_by_city[city][district]
+                    ),
+                    positivity_rate=positivity_by_district[city][district],
+                )
+                for district, area in district_areas[city].items()
+            ],
+        )
+        for city, area in area_by_city.items()
     ]
-    object_density_repo = ObjectDensityRepository()
-    await object_density_repo.insert_many(docs)
+    city_info_repo = CityRepository()
+    await city_info_repo.insert_many(docs)
 
 
 async def main():
-    city_areas = await migrate_areas()
-    # await migrate_osm_objects([doc.city for doc in city_areas])
-    # await migrate_densities({doc.city: doc.area for doc in city_areas})
+    with open("areas_by_hacked_city.json") as file:
+        district_areas = json.load(file)
+    with open("areas_hack.json") as file:
+        areas_json = json.load(file)
+
+    await migrate_osm_objects(list(areas_json.keys()))
+    await migrate_densities(areas_json, district_areas)
 
 
 if __name__ == "__main__":
