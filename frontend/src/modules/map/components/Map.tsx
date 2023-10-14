@@ -13,16 +13,22 @@ function Map(props: MapProps) {
     selectedCities,
   } = props
 
-  console.log(selectedCities, '227')
+  console.log(selectedCities, 'selectedCities')
 
-  const coord = selectedCities.map(item => {
-    return [item.coordinate.latitude, item.coordinate.longitude]
-  })
 
-  console.log(...coord, 'coord')
+  /*  if (selectedCities) {
+      const coords: LatLngTuple = selectedCities.map(item => {
+        return [item.coordinate.latitude, item.coordinate.longitude]
+      })
+
+      console.log(coords, 'coords')
+
+      setCoord(coords as LatLngTuple)
+    }*/
+
 
   return (
-    <MapContainer center={[56.8389, 60.6057]} zoom={10}>
+    <MapContainer center={[3213, 321]} zoom={10}>
       {/* Установите координаты центра и масштаб так, чтобы охватить Россию */}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

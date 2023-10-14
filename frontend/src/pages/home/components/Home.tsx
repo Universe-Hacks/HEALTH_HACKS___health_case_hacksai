@@ -75,14 +75,12 @@ function Home() {
 
   const [cities, setCities] = useState<Data | null>(null);
   const [selectedCities, setSelectedCities] = useState<DataCities[] | null>(null);
+  /*const [coord, setCoord] = useState<LatLngTuple>();*/
 
 
   const items = cities?.items
 
-  console.log(selectedCities, 'selectedCities')
-
-
-  console.log(selectedCities, 'selectedCities')
+  /*console.log(coord, 'coord')*/
 
   useEffect(() => {
     const fetchData = async () => {
@@ -97,8 +95,18 @@ function Home() {
     fetchData();
   }, []);
 
-  console.log(cities, '2323')
 
+  useEffect(() => {
+    if (selectedCities) {
+      const coords = selectedCities.map(item => {
+        return [item.coordinate.latitude, item.coordinate.longitude]
+      })
+
+      console.log(coords, 'coords')
+
+      /* setCoord(coords)*/
+    }
+  }, [selectedCities]);
 
   return (
     <Layout>
