@@ -26,3 +26,11 @@ class PolygonUtils:
     def contains(self, coordinate: CoordinateDTO) -> bool:
         point = Point(coordinate.longitude, coordinate.latitude)
         return self.polygon.contains(point)
+
+    def contains_element(self, element: Element) -> bool:
+        return self.contains(
+            coordinate=CoordinateDTO(
+                latitude=element.centerLat() or element.lat(),
+                longitude=element.centerLon() or element.lon(),
+            )
+        )

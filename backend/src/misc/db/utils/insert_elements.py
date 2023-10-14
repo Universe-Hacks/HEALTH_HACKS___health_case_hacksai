@@ -8,6 +8,7 @@ async def insert_elements(
     elements: list[Element],
     elements_type: ObjectType,
     city_name: str,
+    region_name: str,
 ) -> None:
     osm_repo = OSMObjectsRepository()
 
@@ -32,6 +33,7 @@ async def insert_elements(
                 osm_type=element.type(),
                 object_type=elements_type,
                 city=city_name,
+                district=region_name,
                 tags=element.tags(),
                 coordinate=OSMCoordinate(
                     latitude=element.centerLat() or element.lat(),
