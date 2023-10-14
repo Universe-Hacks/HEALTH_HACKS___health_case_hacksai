@@ -7,3 +7,9 @@ class DistrictModel(BaseModel):
     area: float
     density_by_object: ObjectDensity
     density_by_type: TypeDensity
+
+    positivity_rate: float
+
+    @property
+    def is_positive(self) -> bool:
+        return self.positivity_rate > 1.5
