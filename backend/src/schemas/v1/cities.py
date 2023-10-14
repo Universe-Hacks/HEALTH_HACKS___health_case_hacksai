@@ -1,7 +1,7 @@
-from src.db.models.base_model import BaseModel
+from src.schemas.v1.base import BaseSchema
 
 
-class CitySchema(BaseModel):
+class CitySchema(BaseSchema):
     id: str
     name: str
     positive_density: float

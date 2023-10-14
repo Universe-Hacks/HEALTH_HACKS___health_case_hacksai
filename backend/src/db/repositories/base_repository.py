@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Any, Generic, TypeVar, Union
 
 from motor.core import AgnosticClient, AgnosticCollection, AgnosticDatabase
@@ -61,6 +62,7 @@ class BaseRepository(ABC, Generic[T]):
         )
 
     async def update_one(self, doc: T, upsert=False) -> UpdateResult:
+        doc.updated = datetime.utcnow().replace(microsecond=0)
         update: dict[str, dict] = {
             "$set": doc.model_dump(exclude={"_id"}, by_alias=True, exclude_none=True),
             "$unset": {
