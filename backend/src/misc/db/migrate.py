@@ -64,7 +64,7 @@ async def migrate_densities(area_by_city: dict[str, float]) -> None:
 
     docs = [
         CityModel(
-            city=city,
+            name=city,
             area=area,
             density_by_object=ObjectDensity(**tag_densities_city[city]),
             density_by_type=TypeDensity(**type_densities_city[city]),
