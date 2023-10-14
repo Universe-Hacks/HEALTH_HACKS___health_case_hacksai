@@ -12,6 +12,8 @@ class DistrictModel(BaseModel):
 
     negative_points_overflow: int
 
+    min_negative_point_distance: float
+
     @property
-    def is_positive(self) -> bool:
+    def is_positive_rate_good(self) -> bool:
         return self.positivity_rate > 1.5

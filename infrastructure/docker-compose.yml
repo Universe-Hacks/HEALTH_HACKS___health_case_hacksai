@@ -7,8 +7,10 @@ services:
     container_name: application_server
     ports:
       - 8000:8000
-    environment:
-      MONGO_URI: $MONGO_URI
+#    environment:
+#      MONGO_URI: $MONGO_URI
+    env_file:
+      - ../.env
   
   reverse_proxy:
     image: nginx:1.21.6
