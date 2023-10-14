@@ -15,21 +15,21 @@ function MapLeaflet(props: MapLeafletProps) {
   } = props
 
   const redIcon = new L.Icon({
-    iconUrl: '../../../../../assets/images/red.png',
+    iconUrl: '../../../../red.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
   });
 
   const blueIcon = new L.Icon({
-    iconUrl: '../../../../../assets/images/blue.png',
+    iconUrl: '../../../../blue.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
   });
 
   const greenIcon = new L.Icon({
-    iconUrl: '../../../../../assets/images/green.png',
+    iconUrl: '../../../../green.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
