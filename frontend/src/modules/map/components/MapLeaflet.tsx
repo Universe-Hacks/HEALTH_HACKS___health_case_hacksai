@@ -1,5 +1,5 @@
 import "leaflet/dist/leaflet.css";
-import {TileLayer, useMapEvent} from "react-leaflet";
+import {Marker, Popup, TileLayer, useMapEvent} from "react-leaflet";
 import {useEffect, useState} from "react";
 import {DataCities, Gis} from "../../pickerCity/types";
 import axios from "axios";
@@ -57,21 +57,18 @@ function MapLeaflet(props: MapLeafletProps) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {/*  {items ? (
-        items.map((city, idx) => (
+      {items ? (
+        items.map((city) => (
           <Marker
+            key={`map-leaflet-${city.id}`}
             position={[city.coordinate.latitude, city.coordinate.longitude]}
-            icon={Marker}
-            key={idx}
           >
             <Popup>
-              <b>
-                {city.id}, {city.id}
-              </b>
+              <br/>
             </Popup>
           </Marker>
         ))
-      ) : null}*/}
+      ) : null}
     </>
   )
 }
