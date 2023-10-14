@@ -5,9 +5,9 @@ import logging
 
 from pydantic import BaseModel
 
-from src.db.models.city_info import CityInfo, ObjectDensity, TypeDensity
+from src.db.models.city.city_model import CityModel, ObjectDensity, TypeDensity
 from src.db.models.osm_objects import ObjectType
-from src.db.repositories.city_info import CityInfoRepository
+from src.db.repositories.city import CityRepository
 from src.db.repositories.osm_objects import OSMObjectsRepository
 from src.misc.db.utils.insert_elements import insert_elements
 from src.misc.db.utils.parse_elements import parse_elements
@@ -63,7 +63,7 @@ async def migrate_densities(area_by_city: dict[str, float]) -> None:
         )
 
     docs = [
-        CityInfo(
+        CityModel(
             city=city,
             area=area,
             density_by_object=ObjectDensity(**tag_densities_city[city]),
@@ -71,7 +71,7 @@ async def migrate_densities(area_by_city: dict[str, float]) -> None:
         )
         for city, area in area_by_city.items()
     ]
-    city_info_repo = CityInfoRepository()
+    city_info_repo = CityRepository()
     await city_info_repo.insert_many(docs)
 
 

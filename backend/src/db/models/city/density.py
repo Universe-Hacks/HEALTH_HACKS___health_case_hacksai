@@ -36,10 +36,3 @@ class TypeDensity(BaseModel):
     positive: float = 0
     negative: float = 0
     study: float = 0
-
-
-class CityInfo(BaseModel):
-    city: str
-    area: float
-    density_by_object: ObjectDensity
-    density_by_type: TypeDensity

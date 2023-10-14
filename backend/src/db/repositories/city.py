@@ -2,14 +2,14 @@ from typing import Annotated, TypeAlias
 
 from fastapi import Depends
 
-from src.db.models.city_info import CityInfo
+from src.db.models.city.city_model import CityModel
 from src.db.repositories.base_repository import BaseRepository
 
 
-class CityInfoRepository(BaseRepository):
-    model = CityInfo
+class CityRepository(BaseRepository):
+    model = CityModel
     database_name = "osm"
     collection_name = "city_info"
 
 
-InjectCitiesInfoRepository: TypeAlias = Annotated[CityInfoRepository, Depends()]
+InjectCityRepository: TypeAlias = Annotated[CityRepository, Depends()]
