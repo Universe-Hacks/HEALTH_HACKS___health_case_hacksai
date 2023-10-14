@@ -59,14 +59,16 @@ function MapLeaflet(props: MapLeafletProps) {
       />
       {items ? (
         items.map((city) => (
-          <Marker
-            key={`map-leaflet-${city.id}`}
-            position={[city.coordinate.latitude, city.coordinate.longitude]}
-          >
-            <Popup>
-              <br/>
-            </Popup>
-          </Marker>
+          city.object_type === 'study' ? (
+            <Marker
+              key={`map-leaflet-${city.id}`}
+              position={[city.coordinate.latitude, city.coordinate.longitude]}
+            >
+              <Popup>
+                {city.object_type}
+              </Popup>
+            </Marker>
+          ) : null
         ))
       ) : null}
     </>
