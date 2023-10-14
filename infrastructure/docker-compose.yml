@@ -30,9 +30,8 @@ services:
     container_name: mongodb
     volumes:
       - mongodb_data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: test
+    env_file:
+      - env.example
     ports:
       - 27017:27017
 
