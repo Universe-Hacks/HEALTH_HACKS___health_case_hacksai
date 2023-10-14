@@ -13,6 +13,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: print username
+        run: echo $USER
+
       - name: RUN
         run: cd infrastructure && docker compose -f ./docker-compose.yml up --build frontend_build_service
 
