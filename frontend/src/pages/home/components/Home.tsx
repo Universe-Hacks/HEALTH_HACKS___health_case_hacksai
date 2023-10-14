@@ -3,6 +3,9 @@ import {Button, Card, Col, Descriptions, Layout, Statistic} from 'antd';
 import {ArrowDownOutlined, ArrowUpOutlined} from '@ant-design/icons';
 import CityPicker from "../../../modules/pickerCity/components/CityPicker";
 import Map from "../../../modules/map/components/Map";
+import {useEffect, useState} from "react";
+import {Data, DataCities} from "../../../modules/pickerCity/types";
+import axios from 'axios';
 
 function Home() {
 
@@ -42,7 +45,7 @@ function Home() {
     backgroundColor: '#eee',
   };
 
-  const items: DescriptionsProps['items'] = [
+  const itemsDescriptions: DescriptionsProps['items'] = [
     {
       key: '1',
       label: 'XXXXXX',
@@ -70,10 +73,45 @@ function Home() {
     },
   ];
 
+  const [cities, setCities] = useState<Data | null>(null);
+  const [selectedCities, setSelectedCities] = useState<DataCities[] | null>(null);
+
+
+  const items = cities?.items
+
+  console.log(selectedCities, 'selectedCities')
+
+
+  console.log(selectedCities, 'selectedCities')
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://154.194.53.109:8000/api/v1/cities');
+        setCities(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(cities, '2323')
+
+
   return (
     <Layout>
       <Header style={headerStyle}>
-        <CityPicker/>
+        {
+          items ? (
+            <CityPicker
+              items={items}
+              setSelectedCities={setSelectedCities}
+            />
+          ) : null
+        }
+
         <Button
           style={{
             backgroundColor: '#48773C',
@@ -107,7 +145,9 @@ function Home() {
       </Header>
       <Layout hasSider>
         <Content style={contentStyle}>
-          <Map/>
+          {selectedCities ? (
+            <Map selectedCities={selectedCities}/>
+          ) : null}
         </Content>
         <Sider style={siderStyle}>
           <Col span={35} style={{marginBottom: '40px'}}>
@@ -149,7 +189,7 @@ function Home() {
         </Sider>
       </Layout>
       <Footer style={footerStyle}>
-        <Descriptions style={{fontSize: '20px'}} title="Рекомендации" items={items}/>
+        <Descriptions style={{fontSize: '20px'}} title="Рекомендации" items={itemsDescriptions}/>
       </Footer>
     </Layout>
   )

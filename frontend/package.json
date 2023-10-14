@@ -12,6 +12,7 @@
   "dependencies": {
     "@tabler/icons-react": "^2.39.0",
     "antd": "^5.10.0",
+    "axios": "^1.5.1",
     "leaflet": "^1.9.4",
     "prettier": "^3.0.3",
     "react": "^18.2.0",

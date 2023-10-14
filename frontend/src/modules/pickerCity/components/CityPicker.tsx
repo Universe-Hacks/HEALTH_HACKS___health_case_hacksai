@@ -1,9 +1,31 @@
 import {Select} from 'antd';
+import {DataCities} from "../types";
+import {Dispatch, SetStateAction} from "react";
 
-function CityPicker() {
+type CityPickerProps = {
+  items: DataCities[],
+
+  setSelectedCities: Dispatch<SetStateAction<DataCities[] | null>>,
+};
+
+function CityPicker(props: CityPickerProps) {
+
+  const {
+    items,
+    setSelectedCities,
+  } = props
+
+  const data = items.map((city) => ({
+    value: city.id,
+    label: city.name
+  }))
 
   const onChange = (value: string) => {
-    console.log(`selected ${value}`);
+    const selectedCity = items.filter(item => {
+      return item.id === value
+    })
+
+    setSelectedCities(selectedCity)
   };
 
   const onSearch = (value: string) => {
@@ -12,21 +34,6 @@ function CityPicker() {
 
   const filterOption = (input: string, option?: { label: string; value: string }) =>
     (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
-
-  const data = [
-    {
-      value: 'Екатеринбург',
-      label: 'Екатеринбург',
-    },
-    {
-      value: 'Тула',
-      label: 'Тула',
-    },
-    {
-      value: 'Тамбов',
-      label: 'Тамбов',
-    },
-  ]
 
   return (
     <Select
