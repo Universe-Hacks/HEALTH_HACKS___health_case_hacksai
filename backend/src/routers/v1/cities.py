@@ -17,9 +17,7 @@ async def get_all_cities(repo: InjectCityRepository) -> CountedSchema[CitySchema
             CitySchema(
                 id=str(city.id),
                 name=city.name,
-                positive_density=city.density_by_type.positive,
-                negative_density=city.density_by_type.negative,
-                study_density=city.density_by_type.study,
+                coordinate=city.coordinate,
             )
             for city in cities
         ],
