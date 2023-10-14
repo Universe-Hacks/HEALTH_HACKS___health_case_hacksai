@@ -12,6 +12,7 @@ async def get_city_districts(
 ) -> list[DistrictWithMetric]:
     return [
         DistrictWithMetric(
+            id=str(district.id),
             name=district.name,
             polygon_coordinates=district.polygon_coordinates,
             by_type=district.density_by_type,
