@@ -10,11 +10,9 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: RUN
-      run: docker compose -f ./infrastructure/docker-compose.yml up --build frontend_build_service
+      - name: RUN
+        run: cd infrastructure && docker compose -f ./docker-compose.yml up --build frontend_build_service
 
-    - name: DOWN SUKA
-      run: docker compose -f ./path/to/your/docker-compose.yml down
