@@ -37,8 +37,14 @@ class MetricsByObjectSchema(BaseSchema):
     music_school: float = 0
 
 
+class CoordinatesSchema(BaseSchema):
+    latitude: float
+    longitude: float
+
+
 class DistrictWithMetric(BaseSchema):
     name: str
+    polygon_coordinates: list[CoordinatesSchema]
     by_type: MetricsByTypeSchema
     by_object: MetricsByObjectSchema
     positivity_rate: float

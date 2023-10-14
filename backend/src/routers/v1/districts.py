@@ -15,6 +15,7 @@ async def get_city_districts(
     return [
         DistrictWithMetric(
             name=district.name,
+            polygon_coordinates=district.polygon_coordinates,
             by_type=district.density_by_type,
             by_object=district.density_by_object,
             positivity_rate=district.positivity_rate,
