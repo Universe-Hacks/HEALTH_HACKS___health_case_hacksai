@@ -74,6 +74,15 @@ async def migrate_densities(
             type_info["count"] / district_areas[city][district]
         )
 
+    # Calculate positive rate
+    positivity_by_district = defaultdict(lambda: defaultdict(dict))
+    positivity_info = await osm_objects_repo.calculate_positivity_rate_by_district()
+    for row in positivity_info:
+        city = row["city"]
+        district = row["district"]
+
+        positivity_by_district[city][district] = row["rate"]
+
     docs = [
         CityModel(
             name=city,
@@ -90,6 +99,7 @@ async def migrate_densities(
                     density_by_type=TypeDensity(
                         **type_districts_by_city[city][district]
                     ),
+                    positivity_rate=positivity_by_district[city][district],
                 )
                 for district, area in district_areas[city].items()
             ],

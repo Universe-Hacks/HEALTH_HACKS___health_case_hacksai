@@ -7,3 +7,5 @@ class CitySchema(BaseSchema):
     positive_density: float
     negative_density: float
     study_density: float
+
+    positivity_metric: int

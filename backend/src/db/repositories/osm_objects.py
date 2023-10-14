@@ -67,5 +67,36 @@ class OSMObjectsRepository(BaseRepository[OSMObject]):
             project["$project"]["district"] = "$_id.district"
         return await self._execute_aggregation([group, project])
 
+    async def calculate_positivity_rate_by_district(self):
+        pipline = [
+            {"$match": {"object_type": {"$in": ["positive", "negative"]}}},
+            {
+                "$group": {
+                    "_id": {"city": "$city", "district": "$district"},
+                    "countPositive": {
+                        "$sum": {"$cond": [{"$eq": ["$object_type", "positive"]}, 1, 0]}
+                    },
+                    "countNegative": {
+                        "$sum": {"$cond": [{"$eq": ["$object_type", "negative"]}, 1, 0]}
+                    },
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "city": "$_id.city",
+                    "district": "$_id.district",
+                    "rate": {
+                        "$cond": [
+                            {"$eq": ["$countNegative", 0]},
+                            None,
+                            {"$divide": ["$countPositive", "$countNegative"]},
+                        ]
+                    },
+                }
+            },
+        ]
+        return await self._execute_aggregation(pipline)
+
 
 InjectOSMObjectsRepository: TypeAlias = Annotated[OSMObjectsRepository, Depends()]
