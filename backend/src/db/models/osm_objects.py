@@ -27,6 +27,7 @@ class OSMObject(BaseModel):
     object_type: ObjectType
     coordinate: OSMCoordinate
     city: str
+    district: str
     tags: dict[str, str]
     members: list[OSMMember] | None = None
     nodes: list[int] | None = None
