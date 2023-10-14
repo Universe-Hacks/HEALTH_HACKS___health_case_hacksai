@@ -1,11 +1,12 @@
 import math
 
+from src.db.models.osm_objects import OSMCoordinate
 from src.misc.gis.dto import CoordinateDTO
 
 
 def calculate_distance_in_meters(
-    first_coordinate: CoordinateDTO,
-    second_coordinate: CoordinateDTO,
+    first_coordinate: CoordinateDTO | OSMCoordinate,
+    second_coordinate: CoordinateDTO | OSMCoordinate,
 ) -> float:
     # Преобразование градусов в радианы
     lat1 = math.radians(first_coordinate.latitude)

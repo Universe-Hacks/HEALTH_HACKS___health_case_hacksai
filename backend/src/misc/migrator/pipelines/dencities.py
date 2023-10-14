@@ -5,12 +5,14 @@ from src.db.models.city.district import DistrictModel
 from src.db.repositories.city import CityRepository
 from src.db.repositories.osm_objects import OSMObjectsRepository
 from src.misc.migrator.parser import OSMParser
+from src.services.metrics import MetricsService
 
 
 class DensitiesMigrationPipeline:
     def __init__(self):
         self.parser = OSMParser()
         self.osm_object_repository = OSMObjectsRepository()
+        self.metrics_service = MetricsService()
 
     async def execute(
         self,
@@ -89,9 +91,17 @@ class DensitiesMigrationPipeline:
                             **type_districts_by_city[city][district]
                         ),
                         positivity_rate=positivity_by_district[city][district],
+                        negative_points_overflow=(
+                            await self.metrics_service.calculate_negative_points_overflow(
+                                city, district
+                            )
+                        ),
                     )
                     for district, area in district_areas[city].items()
                 ],
+                avg_negatives_distance=(
+                    await self.metrics_service.calculate_avg_negatives_distance(city)
+                ),
             )
             for city, area in area_by_city.items()
         ]

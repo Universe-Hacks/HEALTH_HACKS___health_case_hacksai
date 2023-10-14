@@ -10,6 +10,8 @@ class CityModel(BaseModel):
     density_by_type: TypeDensity
     districts: list[DistrictModel]
 
+    avg_negatives_distance: float
+
     @property
     def positivity_metric(self) -> int:
         positive_districts = [

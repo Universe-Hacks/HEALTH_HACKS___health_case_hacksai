@@ -10,6 +10,8 @@ class DistrictModel(BaseModel):
 
     positivity_rate: float
 
+    negative_points_overflow: int
+
     @property
     def is_positive(self) -> bool:
         return self.positivity_rate > 1.5
