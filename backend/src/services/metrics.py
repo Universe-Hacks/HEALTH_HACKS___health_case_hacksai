@@ -1,5 +1,3 @@
-import asyncio
-
 from src.db.models.osm_objects import ObjectType
 from src.db.repositories.osm_objects import OSMObjectsRepository
 from src.misc.gis.distance import calculate_distance_in_meters
@@ -58,13 +56,3 @@ class MetricsService:
                 ):
                     overflow_counter += 1
         return overflow_counter
-
-
-# async def main():
-#     ms = MetricsService()
-#     print(await ms.calculate_avg_negatives_distance("Екатеринбург"))
-#     print(await ms.calculate_negative_points_overflow("Екатеринбург", "Октябрьский"))
-#
-#
-# if __name__ == "__main__":
-#     asyncio.run(main())
