@@ -68,7 +68,33 @@ function HomeStatistics(props: HomeStatisticsProps) {
             />
           </Card>
         </Col>
-        <Col span={35}>
+        <Col span={35} style={{marginBottom: '40px'}}>
+          <Card bordered={true}>
+            <Statistic
+              title="Тенденция районов"
+              value={metrics?.positivity_metric >= 1 ? 'Положительная' : metrics?.positivity_metric >= 0 && metrics?.positivity_metric < 1 ? 'Нейтральная' : 'Отрицательная'}
+              precision={0}
+              valueStyle={metrics?.positivity_metric >= 1 ? {color: '#3f8600'} : metrics?.positivity_metric >= 0 && metrics?.positivity_metric < 1 ? {color: '#80A6FF'} : {color: '#cf1322'}}
+              prefix={metrics?.positivity_metric >= 1 ?
+                <ArrowUpOutlined/> : metrics?.positivity_metric >= 0 && metrics?.positivity_metric < 1 ?
+                  <ArrowUpOutlined/> : <ArrowDownOutlined/>}
+              suffix=""
+            />
+          </Card>
+        </Col>
+        <Col span={35} style={{marginBottom: '40px'}}>
+          <Card bordered={true}>
+            <Statistic
+              title="Средняя удаленность отрицательных точек от позитивных"
+              value={metrics?.avg_negatives_distance}
+              precision={0}
+              valueStyle={metrics?.avg_negatives_distance > 200 ? {color: '#3f8600'} : {color: '#cf1322'}}
+              prefix={metrics?.avg_negatives_distance > 200 ? <ArrowUpOutlined/> : <ArrowDownOutlined/>}
+              suffix="м"
+            />
+          </Card>
+        </Col>
+        <Col span={35} style={{marginBottom: '40px'}}>
           <Card bordered={true}>
             <Statistic
               title="Минимальное расстояние от негативной точки до учебного учреждения"
