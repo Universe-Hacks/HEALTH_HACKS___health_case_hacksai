@@ -1,3 +1,7 @@
+from typing import TypeAlias, Annotated
+
+from fastapi import Depends
+
 from src.db.models.osm_objects import OSMObject
 from src.db.repositories.base_repository import BaseRepository
 
@@ -29,3 +33,6 @@ class OSMObjectsRepository(BaseRepository[OSMObject]):
         async for doc in self.collection.aggregate(pipeline):
             docs.append(doc)
         return docs
+
+
+InjectOSMObjectsRepository: TypeAlias = Annotated[OSMObjectsRepository, Depends()]
