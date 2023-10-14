@@ -22,7 +22,7 @@ class __CityArea(BaseModel):
 
 async def migrate_areas() -> list[__CityArea]:
     logger.info("Migrating areas")
-    with open("areas.json") as file:
+    with open("areas_hack.json") as file:
         areas_json = json.load(file)
     docs = [__CityArea(city=city, area=area) for city, area in areas_json.items()]
     return docs
@@ -30,7 +30,7 @@ async def migrate_areas() -> list[__CityArea]:
 
 async def migrate_osm_objects(cities: list[str]):
     logger.info("Migrating osm objects")
-    for city_name in ["Тамбов"]:
+    for city_name in cities:
         logger.info(f"Migrating {city_name}")
         elements = parse_elements(city_name)
         try:
@@ -55,6 +55,7 @@ async def migrate_densities(area_by_city: dict[str, float]) -> None:
             )
 
     type_densities_city = defaultdict(dict)
+
     for type_info in await osm_objects_repo.count_types_by_cities():
         city = type_info["city"]
         type_densities_city[city][type_info["type"]] = (
@@ -76,7 +77,7 @@ async def migrate_densities(area_by_city: dict[str, float]) -> None:
 
 async def main():
     city_areas = await migrate_areas()
-    # await migrate_osm_objects([doc.city for doc in city_areas])
+    await migrate_osm_objects([doc.city for doc in city_areas])
     await migrate_densities({doc.city: doc.area for doc in city_areas})
 
 
