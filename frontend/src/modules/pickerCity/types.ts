@@ -1,8 +1,23 @@
-import {LatLngExpression} from "leaflet";
-
 export type Data = {
   count: number,
   items: DataCities[]
+}
+
+export type Gis = {
+  count: number,
+  items: DataGis[]
+}
+
+export type DataGis = {
+  "id": string,
+  "object_type": string,
+  "coordinate": Coords,
+  "tags": Tags[],
+}
+
+export type Tags = {
+  "name": string,
+  "value": string
 }
 
 export type DataCities = {
@@ -12,6 +27,6 @@ export type DataCities = {
 }
 
 export type Coords = {
-  "latitude": LatLngExpression,
+  "latitude": number,
   "longitude": number
 }

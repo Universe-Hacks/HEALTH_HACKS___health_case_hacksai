@@ -92,7 +92,6 @@ function Home() {
     fetchData();
   }, []);
 
-
   return (
     <Layout>
       <Header style={headerStyle}>
@@ -139,7 +138,7 @@ function Home() {
       <Layout hasSider>
         <Content style={contentStyle}>
           {selectedCities ? (
-            <MapContainer center={[56.839104, 60.60825]} zoom={10} scrollWheelZoom={false}>
+            <MapContainer center={[56.839104, 60.60825]} zoom={10}>
               <MapLeaflet selectedCities={selectedCities}/>
             </MapContainer>
           ) : null}
