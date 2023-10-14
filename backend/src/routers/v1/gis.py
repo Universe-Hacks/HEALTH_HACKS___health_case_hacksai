@@ -22,7 +22,7 @@ async def get_gis_by_city(
         raise HTTPException(status_code=400, detail="Invalid city id")
     if city is None:
         raise HTTPException(status_code=404, detail="City not found")
-    gis_list = await repo_osm.find({"city": city.city})
+    gis_list = await repo_osm.find({"city": city.name})
 
     return CountedSchema(
         count=len(gis_list),
