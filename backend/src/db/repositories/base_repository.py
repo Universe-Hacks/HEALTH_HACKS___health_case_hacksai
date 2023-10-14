@@ -32,6 +32,12 @@ class BaseRepository(ABC, Generic[T]):
         self.database = self.client[self.database_name]
         self.collection = self.database[self.collection_name]
 
+    async def _execute_aggregation(self, pipeline: list[dict]) -> list[dict]:
+        docs = []
+        async for doc in self.collection.aggregate(pipeline):
+            docs.append(doc)
+        return docs
+
     async def find(self, _filter: Filter | None = None) -> list[T]:
         docs = []
         async for doc in self.collection.find(filter=_filter):
@@ -65,5 +71,7 @@ class BaseRepository(ABC, Generic[T]):
         }
         update: dict[str, dict] = {k: v for k, v in update.items() if v}
         return await self.collection.update_one(
-            filter={"_id": doc.id}, update=update, upsert=upsert,
+            filter={"_id": doc.id},
+            update=update,
+            upsert=upsert,
         )

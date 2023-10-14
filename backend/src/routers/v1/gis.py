@@ -1,13 +1,11 @@
-from typing import Any
-
 from bson.errors import InvalidId
 from fastapi import APIRouter, HTTPException
 
-from src.db.repositories.city_area import InjectCitiesAreaRepository
+from src.db.repositories.city_info import InjectCitiesInfoRepository
 from src.db.repositories.osm_objects import InjectOSMObjectsRepository
 from src.db.types.pydantic_object_id import ObjectId
 from src.schemas.v1.base import CountedSchema
-from src.schemas.v1.gis import GISSchema, CoordinateSchema, TagSchema
+from src.schemas.v1.gis import CoordinateSchema, GISSchema, TagSchema
 
 router = APIRouter(prefix="/cities")
 
@@ -16,7 +14,7 @@ router = APIRouter(prefix="/cities")
 async def get_gis_by_city(
     city_id: str,
     repo_osm: InjectOSMObjectsRepository,
-    repo_city: InjectCitiesAreaRepository,
+    repo_city: InjectCitiesInfoRepository,
 ) -> CountedSchema[GISSchema]:
     try:
         city = await repo_city.find_one({"_id": ObjectId(city_id)})

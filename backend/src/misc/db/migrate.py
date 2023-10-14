@@ -1,28 +1,37 @@
 import asyncio
-import json
 from collections import defaultdict
+import json
+import logging
 
-from src.db.models.city_area import CityArea
-from src.db.models.object_density import ObjectDensity
+from pydantic import BaseModel
+
+from src.db.models.city_info import CityInfo, ObjectDensity, TypeDensity
 from src.db.models.osm_objects import ObjectType
-from src.db.repositories.city_area import CityAreaRepository
-from src.db.repositories.object_density import ObjectDensityRepository
+from src.db.repositories.city_info import CityInfoRepository
 from src.db.repositories.osm_objects import OSMObjectsRepository
 from src.misc.db.utils.insert_elements import insert_elements
 from src.misc.db.utils.parse_elements import parse_elements
 
+logger = logging.getLogger(__name__)
 
-async def migrate_areas() -> list[CityArea]:
+
+class __CityArea(BaseModel):
+    city: str
+    area: float
+
+
+async def migrate_areas() -> list[__CityArea]:
+    logger.info("Migrating areas")
     with open("areas.json") as file:
         areas_json = json.load(file)
-    docs = [CityArea(city=city, area=area) for city, area in areas_json.items()]
-    repository = CityAreaRepository()
-    await repository.insert_many(docs)
+    docs = [__CityArea(city=city, area=area) for city, area in areas_json.items()]
     return docs
 
 
 async def migrate_osm_objects(cities: list[str]):
-    for city_name in cities:
+    logger.info("Migrating osm objects")
+    for city_name in ["Тамбов"]:
+        logger.info(f"Migrating {city_name}")
         elements = parse_elements(city_name)
         try:
             await insert_elements(elements.positive, ObjectType.POSITIVE, city_name)
@@ -33,24 +42,42 @@ async def migrate_osm_objects(cities: list[str]):
 
 
 async def migrate_densities(area_by_city: dict[str, float]) -> None:
+    logger.info("Migrating densities")
     osm_objects_repo = OSMObjectsRepository()
     tags = ["amenity", "shop", "leisure", "highway"]
-    tags_by_city = defaultdict(dict)
+    tag_densities_city = defaultdict(dict)
     for tag in tags:
+        logger.info(f"Counting {tag}")
         for tag_info in await osm_objects_repo.count_tag_by_cities(tag):
             city = tag_info["city"]
-            tags_by_city[city][tag_info[tag]] = tag_info["count"] / area_by_city[city]
+            tag_densities_city[city][tag_info[tag]] = (
+                tag_info["count"] / area_by_city[city]
+            )
+
+    type_densities_city = defaultdict(dict)
+    for type_info in await osm_objects_repo.count_types_by_cities():
+        city = type_info["city"]
+        type_densities_city[city][type_info["type"]] = (
+            type_info["count"] / area_by_city[city]
+        )
+
     docs = [
-        ObjectDensity(city=city, **tags_info) for city, tags_info in tags_by_city.items()
+        CityInfo(
+            city=city,
+            area=area,
+            density_by_object=ObjectDensity(**tag_densities_city[city]),
+            density_by_type=TypeDensity(**type_densities_city[city]),
+        )
+        for city, area in area_by_city.items()
     ]
-    object_density_repo = ObjectDensityRepository()
-    await object_density_repo.insert_many(docs)
+    city_info_repo = CityInfoRepository()
+    await city_info_repo.insert_many(docs)
 
 
 async def main():
     city_areas = await migrate_areas()
     # await migrate_osm_objects([doc.city for doc in city_areas])
-    # await migrate_densities({doc.city: doc.area for doc in city_areas})
+    await migrate_densities({doc.city: doc.area for doc in city_areas})
 
 
 if __name__ == "__main__":

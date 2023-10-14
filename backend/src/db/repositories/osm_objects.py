@@ -29,10 +29,26 @@ class OSMObjectsRepository(BaseRepository[OSMObject]):
                 },
             },
         ]
-        docs = []
-        async for doc in self.collection.aggregate(pipeline):
-            docs.append(doc)
-        return docs
+        return await self._execute_aggregation(pipeline)
+
+    async def count_types_by_cities(self) -> list:
+        pipeline = [
+            {
+                "$group": {
+                    "_id": {"city": "$city", "type": "$object_type"},
+                    "count": {"$sum": 1},
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "city": "$_id.city",
+                    "type": "$_id.type",
+                    "count": "$count",
+                }
+            },
+        ]
+        return await self._execute_aggregation(pipeline)
 
 
 InjectOSMObjectsRepository: TypeAlias = Annotated[OSMObjectsRepository, Depends()]

@@ -3,10 +3,9 @@ from src.db.models.base_model import BaseModel
 
 class ObjectDensity(BaseModel):
     # Positive
-    city: str
     park: float = 0
     footway: float = 0
-    pitche: float = 0
+    pitch: float = 0
     sports_centre: float = 0
     stadium: float = 0
     track: float = 0
@@ -31,3 +30,16 @@ class ObjectDensity(BaseModel):
     kindergarten: float = 0
     language_school: float = 0
     music_school: float = 0
+
+
+class TypeDensity(BaseModel):
+    positive: float = 0
+    negative: float = 0
+    study: float = 0
+
+
+class CityInfo(BaseModel):
+    city: str
+    area: float
+    density_by_object: ObjectDensity
+    density_by_type: TypeDensity
