@@ -1,9 +1,12 @@
 from collections import defaultdict
+from typing import Any
 
 from src.db.models.city.city_model import CityModel, ObjectDensity, TypeDensity
 from src.db.models.city.district import DistrictModel
+from src.db.models.osm_objects import OSMCoordinate
 from src.db.repositories.city import CityRepository
 from src.db.repositories.osm_objects import OSMObjectsRepository
+from src.misc.gis.dto import CoordinateDTO
 from src.misc.migrator.parser import OSMParser
 from src.services.metrics import MetricsService
 
@@ -14,15 +17,11 @@ class DensitiesMigrationPipeline:
         self.osm_object_repository = OSMObjectsRepository()
         self.metrics_service = MetricsService()
 
-    async def execute(
+    async def _get_tag_densities_city(
         self,
         area_by_city: dict[str, float],
-        district_areas: dict[str, dict[str, float]],
-    ) -> None:
-        print("Migrating densities")
-        tags = ["amenity", "shop", "leisure", "highway"]
-
-        # Fill density_by_object
+        tags: list[str],
+    ) -> defaultdict[Any, dict]:
         tag_densities_city = defaultdict(dict)
         for tag in tags:
             print(f"Counting {tag}")
@@ -31,16 +30,25 @@ class DensitiesMigrationPipeline:
                 tag_densities_city[city][tag_info[tag]] = (
                     tag_info["count"] / area_by_city[city]
                 )
+        return tag_densities_city
 
-        # Fill density_by_type
+    async def _get_type_densities_city(
+        self,
+        area_by_city: dict[str, float],
+    ) -> defaultdict[Any, dict]:
         type_densities_city = defaultdict(dict)
         for type_info in await self.osm_object_repository.count_types():
             city = type_info["city"]
             type_densities_city[city][type_info["type"]] = (
                 type_info["count"] / area_by_city[city]
             )
+        return type_densities_city
 
-        # Fill density_by_object by district
+    async def _get_tag_districts_by_city(
+        self,
+        district_areas: dict[str, dict[str, float]],
+        tags: list[str],
+    ) -> defaultdict[Any, dict]:
         tag_districts_by_city = defaultdict(lambda: defaultdict(dict))
         for tag in tags:
             for district_info in await self.osm_object_repository.count_tag(
@@ -52,8 +60,12 @@ class DensitiesMigrationPipeline:
                 tag_districts_by_city[city][district][district_info[tag]] = (
                     district_info["count"] / district_areas[city][district]
                 )
+        return tag_districts_by_city
 
-        # Fill density_by_type by district
+    async def _get_type_districts_by_city(
+        self,
+        district_areas: dict[str, dict[str, float]],
+    ) -> defaultdict[Any, dict]:
         type_districts_by_city = defaultdict(lambda: defaultdict(dict))
         for type_info in await self.osm_object_repository.count_types(by_district=True):
             city = type_info["city"]
@@ -62,8 +74,9 @@ class DensitiesMigrationPipeline:
             type_districts_by_city[city][district][type_info["type"]] = (
                 type_info["count"] / district_areas[city][district]
             )
+        return type_districts_by_city
 
-        # Calculate positive rate
+    async def _get_positivity_by_district(self) -> defaultdict[Any, dict]:
         positivity_by_district = defaultdict(lambda: defaultdict(dict))
         positivity_info = (
             await self.osm_object_repository.calculate_positivity_rate_by_district()
@@ -71,13 +84,46 @@ class DensitiesMigrationPipeline:
         for row in positivity_info:
             city = row["city"]
             district = row["district"]
-
             positivity_by_district[city][district] = row["rate"]
 
+        return positivity_by_district
+
+    async def _get_cities_coordinates(
+        self,
+        cities: list[str],
+    ) -> dict[str, CoordinateDTO]:
+        cities_coordinates = {}
+        for city in cities:
+            city_coord = self.parser.parse_city_coordinate(city_name=city)
+            cities_coordinates[city] = city_coord
+        return cities_coordinates
+
+    async def execute(
+        self,
+        area_by_city: dict[str, float],
+        district_areas: dict[str, dict[str, float]],
+    ) -> None:
+        print("Migrating densities")
+        tags = ["amenity", "shop", "leisure", "highway"]
+        tag_densities_city = await self._get_tag_densities_city(area_by_city, tags)
+        type_densities_city = await self._get_type_densities_city(area_by_city)
+        tag_districts_by_city = await self._get_tag_districts_by_city(
+            district_areas,
+            tags,
+        )
+        type_districts_by_city = await self._get_type_districts_by_city(district_areas)
+        positivity_by_district = await self._get_positivity_by_district()
+        cities_coordinates = await self._get_cities_coordinates(
+            list(area_by_city.keys())
+        )
         docs = [
             CityModel(
                 name=city,
                 area=area,
+                coordinate=OSMCoordinate(
+                    latitude=cities_coordinates[city].latitude,
+                    longitude=cities_coordinates[city].longitude,
+                ),
                 density_by_object=ObjectDensity(**tag_densities_city[city]),
                 density_by_type=TypeDensity(**type_densities_city[city]),
                 districts=[
