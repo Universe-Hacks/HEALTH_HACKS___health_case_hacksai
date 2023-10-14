@@ -24,7 +24,7 @@ function ComparisonArea() {
 
   const contentStyle: React.CSSProperties = {
     textAlign: 'center',
-    minHeight: 550,
+    minHeight: '100vh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

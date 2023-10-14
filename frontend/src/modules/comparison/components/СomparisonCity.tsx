@@ -48,7 +48,7 @@ function ComparisonCity() {
 
   const contentStyle: React.CSSProperties = {
     textAlign: 'center',
-    minHeight: 550,
+    minHeight: '100vh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -115,32 +115,6 @@ function ComparisonCity() {
 
       </Footer>
     </Layout>
-    /* <>
-       <div className="comparison__city-back">
-         <Button
-           style={{
-             backgroundColor: '#48773C',
-             color: '#fff',
-             display: 'inline-flex',
-             alignItems: 'center',
-             height: '48px',
-             marginLeft: '40px',
-             textDecoration: 'none',
-             borderRadius: '6px'
-           }}
-           href="/"
-         >
-           Назад
-         </Button>
-       </div>
-       <div className="home__wrapper">
-         <Table
-           columns={columns}
-           dataSource={data}
-           pagination={false}
-         />
-       </div>
-     </>*/
   );
 }
 
