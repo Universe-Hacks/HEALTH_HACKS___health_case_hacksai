@@ -3,7 +3,7 @@ import {Marker, Popup, TileLayer, useMapEvent} from "react-leaflet";
 import {useEffect, useState} from "react";
 import {DataCities, Gis} from "../../pickerCity/types";
 import axios from "axios";
-import {LatLngExpression} from "leaflet";
+import L, {LatLngExpression} from "leaflet";
 
 type MapLeafletProps = {
   selectedCities: DataCities[]
@@ -13,6 +13,27 @@ function MapLeaflet(props: MapLeafletProps) {
   const {
     selectedCities,
   } = props
+
+  const redIcon = new L.Icon({
+    iconUrl: '../../../../../assets/images/red.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+
+  const blueIcon = new L.Icon({
+    iconUrl: '../../../../../assets/images/blue.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+
+  const greenIcon = new L.Icon({
+    iconUrl: '../../../../../assets/images/green.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
 
   const [position, setPosition] = useState<LatLngExpression>();
   const [gis, setGis] = useState<Gis | null>(null);
@@ -59,16 +80,37 @@ function MapLeaflet(props: MapLeafletProps) {
       />
       {items ? (
         items.map((city) => (
-          city.object_type === 'study' ? (
+          city.object_type === 'positive' ? (
             <Marker
               key={`map-leaflet-${city.id}`}
               position={[city.coordinate.latitude, city.coordinate.longitude]}
+              icon={greenIcon}
             >
-              <Popup>
-                {city.object_type}
-              </Popup>
+              {city.object_type}
             </Marker>
-          ) : null
+          ) : (
+            city.object_type === 'study' ? (
+              <Marker
+                key={`map-leaflet-${city.id}`}
+                position={[city.coordinate.latitude, city.coordinate.longitude]}
+                icon={blueIcon}
+              >
+                <Popup>
+                  {city.object_type}
+                </Popup>
+              </Marker>
+            ) : (
+              <Marker
+                key={`map-leaflet-${city.id}`}
+                position={[city.coordinate.latitude, city.coordinate.longitude]}
+                icon={redIcon}
+              >
+                <Popup>
+                  {city.object_type}
+                </Popup>
+              </Marker>
+            )
+          )
         ))
       ) : null}
     </>
