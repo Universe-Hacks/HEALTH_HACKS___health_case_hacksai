@@ -41,3 +41,5 @@ class MetricsByObjectSchema(BaseSchema):
 class MetricSchema(BaseSchema):
     by_type: MetricsByTypeSchema
     by_object: MetricsByObjectSchema
+    positivity_metric: int
+    avg_negatives_distance: float
