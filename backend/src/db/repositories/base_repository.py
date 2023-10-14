@@ -51,7 +51,7 @@ class BaseRepository(ABC, Generic[T]):
 
     async def insert_one(self, doc: T) -> InsertOneResult:
         return await self.collection.insert_one(
-            document=doc.model_dump(by_alias=True, exclude_none=True)
+            document=doc.model_dump(by_alias=True, exclude_none=True),
         )
 
     async def update_one(self, doc: T, upsert=False) -> UpdateResult:
@@ -65,5 +65,5 @@ class BaseRepository(ABC, Generic[T]):
         }
         update: dict[str, dict] = {k: v for k, v in update.items() if v}
         return await self.collection.update_one(
-            filter={"_id": doc.id}, update=update, upsert=upsert
+            filter={"_id": doc.id}, update=update, upsert=upsert,
         )

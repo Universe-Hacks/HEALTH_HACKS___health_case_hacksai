@@ -14,7 +14,7 @@ class OSMObjectsRepository(BaseRepository[OSMObject]):
                 "$group": {
                     "_id": {"city": "$city", f"{tag}": f"$tags.{tag}"},
                     "counter": {"$sum": 1},
-                }
+                },
             },
             {
                 "$project": {
@@ -22,7 +22,7 @@ class OSMObjectsRepository(BaseRepository[OSMObject]):
                     "city": "$_id.city",
                     f"{tag}": f"$_id.{tag}",
                     "count": "$counter",
-                }
+                },
             },
         ]
         docs = []

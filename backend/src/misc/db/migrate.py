@@ -1,15 +1,15 @@
 import asyncio
-from collections import defaultdict
 import json
+from collections import defaultdict
 
 from src.db.models.city_area import CityArea
+from src.db.models.object_density import ObjectDensity
+from src.db.models.osm_objects import ObjectType
 from src.db.repositories.city_area import CityAreaRepository
-from db.models.object_density import ObjectDensity
-from db.models.osm_objects import ObjectType
-from db.repositories.object_density import ObjectDensityRepository
-from db.repositories.osm_objects import OSMObjectsRepository
-from misc.db.utils.insert_elements import insert_elements
-from misc.db.utils.parse_elements import parse_elements
+from src.db.repositories.object_density import ObjectDensityRepository
+from src.db.repositories.osm_objects import OSMObjectsRepository
+from src.misc.db.utils.insert_elements import insert_elements
+from src.misc.db.utils.parse_elements import parse_elements
 
 
 async def migrate_areas() -> list[CityArea]:

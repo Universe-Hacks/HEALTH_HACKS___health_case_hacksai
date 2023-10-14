@@ -1,5 +1,5 @@
-from db.models.object_density import ObjectDensity
-from db.repositories.base_repository import BaseRepository
+from src.db.models.object_density import ObjectDensity
+from src.db.repositories.base_repository import BaseRepository
 
 
 class ObjectDensityRepository(BaseRepository):
