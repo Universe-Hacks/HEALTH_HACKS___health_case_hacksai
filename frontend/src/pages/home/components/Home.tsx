@@ -2,10 +2,11 @@ import type {DescriptionsProps} from 'antd';
 import {Button, Card, Col, Descriptions, Layout, Statistic} from 'antd';
 import {ArrowDownOutlined, ArrowUpOutlined} from '@ant-design/icons';
 import CityPicker from "../../../modules/pickerCity/components/CityPicker";
-import Map from "../../../modules/map/components/Map";
 import {useEffect, useState} from "react";
 import {Data, DataCities} from "../../../modules/pickerCity/types";
 import axios from 'axios';
+import {MapContainer} from "react-leaflet";
+import MapLeaflet from "../../../modules/map/components/MapLeaflet";
 
 function Home() {
 
@@ -74,13 +75,9 @@ function Home() {
   ];
 
   const [cities, setCities] = useState<Data | null>(null);
-  const [selectedCities, setSelectedCities] = useState<DataCities[] | null>(null);
-  /*const [coord, setCoord] = useState<LatLngTuple>();*/
-
+  const [selectedCities, setSelectedCities] = useState<DataCities[] | null>([]);
 
   const items = cities?.items
-
-  /*console.log(coord, 'coord')*/
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,18 +92,6 @@ function Home() {
     fetchData();
   }, []);
 
-
-  useEffect(() => {
-    if (selectedCities) {
-      const coords = selectedCities.map(item => {
-        return [item.coordinate.latitude, item.coordinate.longitude]
-      })
-
-      console.log(coords, 'coords')
-
-      /* setCoord(coords)*/
-    }
-  }, [selectedCities]);
 
   return (
     <Layout>
@@ -154,7 +139,9 @@ function Home() {
       <Layout hasSider>
         <Content style={contentStyle}>
           {selectedCities ? (
-            <Map selectedCities={selectedCities}/>
+            <MapContainer center={[56.839104, 60.60825]} zoom={10} scrollWheelZoom={false}>
+              <MapLeaflet selectedCities={selectedCities}/>
+            </MapContainer>
           ) : null}
         </Content>
         <Sider style={siderStyle}>

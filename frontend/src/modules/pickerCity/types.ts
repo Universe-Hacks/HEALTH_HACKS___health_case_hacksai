@@ -1,3 +1,5 @@
+import {LatLngExpression} from "leaflet";
+
 export type Data = {
   count: number,
   items: DataCities[]
@@ -10,6 +12,6 @@ export type DataCities = {
 }
 
 export type Coords = {
-  "latitude": number,
+  "latitude": LatLngExpression,
   "longitude": number
 }
