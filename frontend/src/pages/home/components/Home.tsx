@@ -21,7 +21,6 @@ function Home() {
 
   const contentStyle: React.CSSProperties = {
     textAlign: 'center',
-    minHeight: '100vh',
     display: 'flex',
     alignItems: 'center',
     lineHeight: '120px',
