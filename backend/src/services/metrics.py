@@ -56,3 +56,34 @@ class MetricsService:
                 ):
                     overflow_counter += 1
         return overflow_counter
+
+    async def calculate_min_negative_point_distance(
+        self, city_name: str, district_name: str
+    ) -> float:
+        study_points = await self.osm_objects_repository.find(
+            {
+                "object_type": ObjectType.STUDY,
+                "city": city_name,
+                "district": district_name,
+            }
+        )
+        negative_points = await self.osm_objects_repository.find(
+            {
+                "object_type": ObjectType.NEGATIVE,
+                "city": city_name,
+                "district": district_name,
+            }
+        )
+        min_distance = None
+        for study_point in study_points:
+            for negative_point in negative_points:
+                distance = calculate_distance_in_meters(
+                    study_point.coordinate,
+                    negative_point.coordinate,
+                )
+                if min_distance is None:
+                    min_distance = distance
+                elif distance < min_distance:
+                    min_distance = distance
+
+        return min_distance

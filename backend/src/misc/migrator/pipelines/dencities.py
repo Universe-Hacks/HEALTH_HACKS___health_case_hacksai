@@ -142,6 +142,11 @@ class DensitiesMigrationPipeline:
                                 city, district
                             )
                         ),
+                        min_negative_point_distance=(
+                            await self.metrics_service.calculate_min_negative_point_distance(
+                                city, district
+                            )
+                        ),
                     )
                     for district, area in district_areas[city].items()
                 ],
