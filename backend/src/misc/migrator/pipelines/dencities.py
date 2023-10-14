@@ -1,30 +1,30 @@
-import asyncio
-import json
-import logging
 from collections import defaultdict
 
 from src.db.models.city.city_model import CityModel, ObjectDensity, TypeDensity
 from src.db.models.city.district import DistrictModel
 from src.db.repositories.city import CityRepository
 from src.db.repositories.osm_objects import OSMObjectsRepository
-from src.misc.migrator.pipelines.osm_object import OSMObjectsMigrationPipeline
+from src.misc.migrator.parser import OSMParser
 
 
 class DensitiesMigrationPipeline:
+    def __init__(self):
+        self.parser = OSMParser()
+        self.osm_object_repository = OSMObjectsRepository()
+
     async def execute(
         self,
         area_by_city: dict[str, float],
         district_areas: dict[str, dict[str, float]],
     ) -> None:
         print("Migrating densities")
-        osm_objects_repo = OSMObjectsRepository()
         tags = ["amenity", "shop", "leisure", "highway"]
 
         # Fill density_by_object
         tag_densities_city = defaultdict(dict)
         for tag in tags:
             print(f"Counting {tag}")
-            for tag_info in await osm_objects_repo.count_tag(tag):
+            for tag_info in await self.osm_object_repository.count_tag(tag):
                 city = tag_info["city"]
                 tag_densities_city[city][tag_info[tag]] = (
                     tag_info["count"] / area_by_city[city]
@@ -32,7 +32,7 @@ class DensitiesMigrationPipeline:
 
         # Fill density_by_type
         type_densities_city = defaultdict(dict)
-        for type_info in await osm_objects_repo.count_types():
+        for type_info in await self.osm_object_repository.count_types():
             city = type_info["city"]
             type_densities_city[city][type_info["type"]] = (
                 type_info["count"] / area_by_city[city]
@@ -41,7 +41,9 @@ class DensitiesMigrationPipeline:
         # Fill density_by_object by district
         tag_districts_by_city = defaultdict(lambda: defaultdict(dict))
         for tag in tags:
-            for district_info in await osm_objects_repo.count_tag(tag, by_district=True):
+            for district_info in await self.osm_object_repository.count_tag(
+                tag, by_district=True
+            ):
                 city = district_info["city"]
                 district = district_info["district"]
 
@@ -51,7 +53,7 @@ class DensitiesMigrationPipeline:
 
         # Fill density_by_type by district
         type_districts_by_city = defaultdict(lambda: defaultdict(dict))
-        for type_info in await osm_objects_repo.count_types(by_district=True):
+        for type_info in await self.osm_object_repository.count_types(by_district=True):
             city = type_info["city"]
             district = type_info["district"]
 
@@ -61,7 +63,9 @@ class DensitiesMigrationPipeline:
 
         # Calculate positive rate
         positivity_by_district = defaultdict(lambda: defaultdict(dict))
-        positivity_info = await osm_objects_repo.calculate_positivity_rate_by_district()
+        positivity_info = (
+            await self.osm_object_repository.calculate_positivity_rate_by_district()
+        )
         for row in positivity_info:
             city = row["city"]
             district = row["district"]
