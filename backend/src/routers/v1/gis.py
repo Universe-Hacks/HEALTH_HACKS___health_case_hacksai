@@ -1,5 +1,6 @@
 from typing import Any
 
+from bson.errors import InvalidId
 from fastapi import APIRouter, HTTPException
 
 from src.db.repositories.city_area import InjectCitiesAreaRepository
@@ -17,7 +18,10 @@ async def get_gis_by_city(
     repo_osm: InjectOSMObjectsRepository,
     repo_city: InjectCitiesAreaRepository,
 ) -> CountedSchema[GISSchema]:
-    city = await repo_city.find_one({"_id": ObjectId(city_id)})
+    try:
+        city = await repo_city.find_one({"_id": ObjectId(city_id)})
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid city id")
     if city is None:
         raise HTTPException(status_code=404, detail="City not found")
     gis_list = await repo_osm.find({"city": city.city})
