@@ -1,39 +1,15 @@
 import {Button, Layout, Table} from "antd";
 import type {ColumnsType} from 'antd/es/table';
 
-function ComparisonCity() {
+function ComparisonArea() {
+
+  const {Header, Footer, Content} = Layout;
 
   interface DataType {
     key: string;
     name: string;
     address: string;
   }
-
-  const {Header, Footer, Content} = Layout;
-
-  const columns: ColumnsType<DataType> = [
-    {
-      title: 'Метрика / Город',
-      dataIndex: 'name',
-      key: 'name',
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: 'Город 1',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: 'Город 2',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: 'Город 3',
-      key: 'tags',
-      dataIndex: 'tags',
-    },
-  ];
 
   const headerStyle: React.CSSProperties = {
     textAlign: 'left',
@@ -64,6 +40,30 @@ function ComparisonCity() {
     color: '#fff',
     backgroundColor: '#eaeeef',
   };
+
+  const columns: ColumnsType<DataType> = [
+    {
+      title: 'Метрика / Район',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: 'Район 1',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: 'Район 2',
+      dataIndex: 'address',
+      key: 'address',
+    },
+    {
+      title: 'Район 3',
+      key: 'tags',
+      dataIndex: 'tags',
+    },
+  ];
 
   const data: DataType[] = [
     {
@@ -115,33 +115,7 @@ function ComparisonCity() {
 
       </Footer>
     </Layout>
-    /* <>
-       <div className="comparison__city-back">
-         <Button
-           style={{
-             backgroundColor: '#48773C',
-             color: '#fff',
-             display: 'inline-flex',
-             alignItems: 'center',
-             height: '48px',
-             marginLeft: '40px',
-             textDecoration: 'none',
-             borderRadius: '6px'
-           }}
-           href="/"
-         >
-           Назад
-         </Button>
-       </div>
-       <div className="home__wrapper">
-         <Table
-           columns={columns}
-           dataSource={data}
-           pagination={false}
-         />
-       </div>
-     </>*/
   );
 }
 
-export default ComparisonCity
+export default ComparisonArea
