@@ -45,6 +45,12 @@ export type Area = {
   "positivity_rate": number,
   "negative_points_overflow": number,
   "min_negative_point_distance": number,
+  "recs": [
+    {
+      "key": string,
+      "value": string
+    }
+  ]
 }
 
 export type Metrics = {

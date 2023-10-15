@@ -17,8 +17,6 @@ function MapLeaflet(props: MapLeafletProps) {
     selectedArea,
   } = props
 
-  console.log(selectedArea, '334')
-
   const redIcon = new L.Icon({
     iconUrl: '../../../../red.png',
     iconSize: [25, 41],
@@ -60,9 +58,6 @@ function MapLeaflet(props: MapLeafletProps) {
   })
 
   const polyg = polygon[0]?.map(item => [item.latitude, item.longitude]);
-
-  console.log(selectedCities, '444')
-  console.log(polygon, '555')
 
   useEffect(() => {
     const newCoords = selectedCities.map(item => {
@@ -112,13 +107,6 @@ function MapLeaflet(props: MapLeafletProps) {
 
     fetch();
   }, [selectedArea]);
-
-
-  const filteredTags = items?.map(city => {
-    return city.tags
-  })
-
-  console.log(filteredTags, 'filteredTags')
 
   return (
     <>

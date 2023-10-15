@@ -62,8 +62,6 @@ function HomeStatistics(props: HomeStatisticsProps) {
     };
   }, [arrow]);
 
-  console.log(selectedArea, 'reametr')
-
   return (
     metrics ? (
       <Sider style={siderStyle}>

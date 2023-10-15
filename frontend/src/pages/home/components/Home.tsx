@@ -1,5 +1,4 @@
-import type {DescriptionsProps} from 'antd';
-import {Button, Descriptions, Layout} from 'antd';
+import {Button, Layout} from 'antd';
 import CityPicker from "../../../modules/pickerCity/components/CityPicker";
 import {useEffect, useState} from "react";
 import {Area, Data, DataCities} from "../../../modules/pickerCity/types";
@@ -8,10 +7,19 @@ import HomeStatistics from "./inner/HomeStatistics";
 import {MapContainer} from "react-leaflet";
 import MapLeaflet from "../../../modules/map/components/MapLeaflet";
 import AreaPicker from "../../../modules/pickerCity/components/AreaPicker";
+import FooterWrapper from "./inner/FooterWrapper";
 
 const {Header, Footer} = Layout;
 
 function Home() {
+
+  const [cities, setCities] = useState<Data | null>(null);
+  const [selectedCities, setSelectedCities] = useState<DataCities[] | null>([]);
+  const [selectedArea, setSelectedArea] = useState<Area[] | null>([]);
+  const [areas, setAreas] = useState<Area[] | null>(null);
+
+  const items = cities?.items
+
   const headerStyle: React.CSSProperties = {
     textAlign: 'left',
     display: 'flex',
@@ -30,44 +38,6 @@ function Home() {
     backgroundColor: '#eee',
   };
 
-  const itemsDescriptions: DescriptionsProps['items'] = [
-    {
-      key: '1',
-      label: 'XXXXXX',
-      children: 'Понизьте количество негативных объектов',
-    },
-    {
-      key: '2',
-      label: 'XXXXXX',
-      children: 'Повысьте количество положительных объектов',
-    },
-    {
-      key: '3',
-      label: 'XXXXXX',
-      children: 'Понизьте количество негативных объектов',
-    },
-    {
-      key: '4',
-      label: 'XXXXXX',
-      children: 'Повысьте количество положительных объектов',
-    },
-    {
-      key: '5',
-      label: 'XXXXXX',
-      children: 'Понизьте количество негативных объектов',
-    },
-  ];
-
-  const [cities, setCities] = useState<Data | null>(null);
-  const [selectedCities, setSelectedCities] = useState<DataCities[] | null>([]);
-  const [selectedArea, setSelectedArea] = useState<Area[] | null>([]);
-  const [areas, setAreas] = useState<Area[] | null>(null);
-
-  const items = cities?.items
-
-
-  console.log(selectedArea, 'selectedArea')
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,8 +50,6 @@ function Home() {
 
     fetchData();
   }, []);
-
-  console.log(areas, 'areas')
 
   const {Content} = Layout;
 
@@ -167,9 +135,12 @@ function Home() {
           </Layout>
         </>
       ) : null}
-      <Footer style={footerStyle}>
-        <Descriptions style={{fontSize: '20px'}} title="Рекомендации" items={itemsDescriptions}/>
-      </Footer>
+
+      {selectedCities || selectedArea ? (
+        <Footer style={footerStyle}>
+          <FooterWrapper selectedArea={selectedArea as Area[]} selectedCities={selectedCities as DataCities[]}/>
+        </Footer>
+      ) : null}
     </Layout>
   )
 }

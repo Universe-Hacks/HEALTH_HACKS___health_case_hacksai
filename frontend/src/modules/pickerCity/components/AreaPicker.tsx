@@ -15,14 +15,12 @@ type AreaPickerProps = {
   setSelectedArea: Dispatch<SetStateAction<Area[] | null>>,
 
   setSelectedCities: Dispatch<SetStateAction<DataCities[] | null>>,
-
 }
 
 function AreaPicker(props: AreaPickerProps) {
 
   const {
     selectedCities,
-    selectedArea,
     setSelectedArea,
     setAreas,
     areas,
@@ -50,7 +48,6 @@ function AreaPicker(props: AreaPickerProps) {
   })) : []
 
   const onChange = (value: string) => {
-    console.log(selectedArea, '21')
     const selectedAreas = areas?.filter(item => {
       return item.id === value
     })
