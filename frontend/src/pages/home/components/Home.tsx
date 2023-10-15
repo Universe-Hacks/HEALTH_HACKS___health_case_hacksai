@@ -2,11 +2,12 @@ import type {DescriptionsProps} from 'antd';
 import {Button, Descriptions, Layout} from 'antd';
 import CityPicker from "../../../modules/pickerCity/components/CityPicker";
 import {useEffect, useState} from "react";
-import {Data, DataCities} from "../../../modules/pickerCity/types";
+import {Area, Data, DataCities} from "../../../modules/pickerCity/types";
 import axios from 'axios';
 import HomeStatistics from "./inner/HomeStatistics";
 import {MapContainer} from "react-leaflet";
 import MapLeaflet from "../../../modules/map/components/MapLeaflet";
+import AreaPicker from "../../../modules/pickerCity/components/AreaPicker";
 
 const {Header, Footer} = Layout;
 
@@ -59,8 +60,13 @@ function Home() {
 
   const [cities, setCities] = useState<Data | null>(null);
   const [selectedCities, setSelectedCities] = useState<DataCities[] | null>([]);
+  const [selectedArea, setSelectedArea] = useState<Area[] | null>([]);
+  const [areas, setAreas] = useState<Area[] | null>(null);
 
   const items = cities?.items
+
+
+  console.log(selectedArea, 'selectedArea')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,6 +80,8 @@ function Home() {
 
     fetchData();
   }, []);
+
+  console.log(areas, 'areas')
 
   const {Content} = Layout;
 
@@ -96,9 +104,20 @@ function Home() {
             <CityPicker
               items={items}
               setSelectedCities={setSelectedCities}
+              setSelectedArea={setSelectedArea}
             />
           ) : null
         }
+        {selectedCities ? (
+          <AreaPicker
+            areas={areas}
+            setAreas={setAreas}
+            selectedCities={selectedCities}
+            selectedArea={selectedArea}
+            setSelectedArea={setSelectedArea}
+            setSelectedCities={setSelectedCities}
+          />
+        ) : null}
         <Button
           style={{
             backgroundColor: '#48773C',
@@ -134,14 +153,21 @@ function Home() {
         <>
           <Layout hasSider>
             <Content style={contentStyle}>
-              {selectedCities ? (
-                <MapContainer center={[56.839104, 60.60825]} zoom={10}>
-                  <MapLeaflet selectedCities={selectedCities}/>
+              {selectedCities || selectedArea ? (
+                <MapContainer center={[56.839104, 60.60825]} zoom={16}>
+                  <MapLeaflet
+                    selectedCities={selectedCities}
+                    selectedArea={selectedArea as Area[]}
+                  />
                 </MapContainer>
               ) : null}
             </Content>
-            <HomeStatistics selectedCities={selectedCities}/>
+            <HomeStatistics
+              selectedCities={selectedCities}
+              selectedArea={selectedArea as Area[]}
+            />
           </Layout>
+
         </>
       ) : null}
       <Footer style={footerStyle}>

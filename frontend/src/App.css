@@ -62,6 +62,13 @@
 .custom-select {
     width: 150px;
     height: 48px;
+    margin-right: 40px;
+}
+
+.custom-select-area {
+    width: 320px;
+    height: 48px;
+    margin-right: 40px;
 }
 
 .ant-select-selector:hover,

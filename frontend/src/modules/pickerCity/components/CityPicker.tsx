@@ -1,9 +1,11 @@
 import {Select} from 'antd';
-import {DataCities} from "../types";
+import {Area, DataCities} from "../types";
 import {Dispatch, SetStateAction} from "react";
 
 type CityPickerProps = {
   items: DataCities[],
+
+  setSelectedArea: Dispatch<SetStateAction<Area[] | null>>,
 
   setSelectedCities: Dispatch<SetStateAction<DataCities[] | null>>,
 };
@@ -11,6 +13,7 @@ type CityPickerProps = {
 function CityPicker(props: CityPickerProps) {
 
   const {
+    setSelectedArea,
     items,
     setSelectedCities,
   } = props
@@ -26,6 +29,7 @@ function CityPicker(props: CityPickerProps) {
     })
 
     setSelectedCities(selectedCity)
+    setSelectedArea([])
     alert('Кликни на карту для навигации к выбранному городу')
   };
 

@@ -1,16 +1,19 @@
 import {Card, Col, Layout, Statistic} from "antd";
 import {ArrowDownOutlined, ArrowUpOutlined} from "@ant-design/icons";
-import {DataCities, Metrics} from "../../../../modules/pickerCity/types";
+import {Area, DataCities, Metrics} from "../../../../modules/pickerCity/types";
 import {useEffect, useState} from "react";
 import axios from "axios";
 
 type HomeStatisticsProps = {
   selectedCities: DataCities[]
+
+  selectedArea: Area[],
 };
 
 function HomeStatistics(props: HomeStatisticsProps) {
   const {
     selectedCities,
+    selectedArea,
   } = props
 
   const [metrics, setMetrics] = useState<Metrics | null>(null);
@@ -39,11 +42,40 @@ function HomeStatistics(props: HomeStatisticsProps) {
     fetch();
   }, [selectedCities]);
 
-  console.log(metrics, 'metr')
+  console.log(selectedArea, 'reametr')
 
   return (
     metrics ? (
       <Sider style={siderStyle}>
+        {selectedArea?.[0]?.positivity_rate ? (
+          <>
+            <Col span={35} style={{marginBottom: '40px'}}>
+              <Card bordered={true}>
+                <Statistic
+                  title="Отношение позитивных точек к негативным"
+                  value={selectedArea?.[0]?.positivity_rate}
+                  precision={2}
+                  valueStyle={selectedArea?.[0]?.positivity_rate >= 1.5 ? {color: '#3f8600'} : {color: '#cf1322'}}
+                  prefix={selectedArea?.[0]?.positivity_rate >= 1.5 ? <ArrowUpOutlined/> : <ArrowDownOutlined/>}
+                  suffix={<>точек/км<sup>2</sup></>}
+                />
+              </Card>
+            </Col>
+            <Col span={35} style={{marginBottom: '40px'}}>
+              <Card bordered={true}>
+                <Statistic
+                  title="Число негативных точек удаленных менее 100м от учебных учреждений"
+                  value={selectedArea?.[0]?.negative_points_overflow}
+                  precision={0}
+                  valueStyle={selectedArea?.[0]?.negative_points_overflow >= 1 ? {color: '#3f8600'} : {color: '#cf1322'}}
+                  prefix={selectedArea?.[0]?.negative_points_overflow >= 1 ? <ArrowUpOutlined/> : <ArrowDownOutlined/>}
+                  suffix="точек"
+                />
+              </Card>
+            </Col>
+          </>
+        ) : null}
+
         <Col span={35} style={{marginBottom: '40px'}}>
           <Card bordered={true}>
             <Statistic

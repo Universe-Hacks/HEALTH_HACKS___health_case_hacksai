@@ -1,18 +1,23 @@
 import "leaflet/dist/leaflet.css";
-import {Marker, Popup, TileLayer, useMapEvent} from "react-leaflet";
+import {Marker, Polygon, Popup, TileLayer, useMapEvent} from "react-leaflet";
 import {useEffect, useState} from "react";
-import {DataCities, Gis} from "../../pickerCity/types";
+import {Area, DataCities, Gis} from "../../pickerCity/types";
 import axios from "axios";
 import L, {LatLngExpression} from "leaflet";
 
 type MapLeafletProps = {
   selectedCities: DataCities[]
+
+  selectedArea: Area[]
 };
 
 function MapLeaflet(props: MapLeafletProps) {
   const {
     selectedCities,
+    selectedArea,
   } = props
+
+  console.log(selectedArea, '334')
 
   const redIcon = new L.Icon({
     iconUrl: '../../../../red.png',
@@ -36,11 +41,28 @@ function MapLeaflet(props: MapLeafletProps) {
   });
 
   const [position, setPosition] = useState<LatLngExpression>();
+  const [positionArea, setPositionArea] = useState<LatLngExpression>();
   const [gis, setGis] = useState<Gis | null>(null);
+  const [, setAreaGis] = useState<Gis | null>(null);
+
+  const items = gis?.items
 
   const map = useMapEvent('click', () => {
     map.setView(position as LatLngExpression, map.getZoom())
   })
+
+  const mapArea = useMapEvent('click', () => {
+    mapArea.setView(positionArea as LatLngExpression, mapArea.getZoom())
+  })
+
+  const polygon = selectedArea.map(item => {
+    return item.polygon_coordinates
+  })
+
+  const polyg = polygon[0]?.map(item => [item.latitude, item.longitude]);
+
+  console.log(selectedCities, '444')
+  console.log(polygon, '555')
 
   useEffect(() => {
     const newCoords = selectedCities.map(item => {
@@ -49,8 +71,17 @@ function MapLeaflet(props: MapLeafletProps) {
 
     const newCoordsNotEmpty = newCoords.length > 0 ? newCoords[0] : null;
     setPosition(newCoordsNotEmpty as LatLngExpression)
-
   }, [selectedCities]);
+
+  useEffect(() => {
+    const newCoords = selectedArea.map(item => {
+      return [item.polygon_coordinates[0].latitude, item.polygon_coordinates[0].longitude]
+    });
+
+    const newCoordsNotEmpty = newCoords.length > 0 ? newCoords[0] : null;
+    setPositionArea(newCoordsNotEmpty as LatLngExpression)
+  }, [selectedArea]);
+
 
   useEffect(() => {
     const fetch = async () => {
@@ -67,10 +98,20 @@ function MapLeaflet(props: MapLeafletProps) {
     fetch();
   }, [selectedCities]);
 
-  const items = gis?.items
+  useEffect(() => {
+    const fetch = async () => {
+      if (selectedArea?.[0]?.id) {
+        try {
+          const response = await axios.get(`http://154.194.53.109:8000/api/v1/cities/${selectedCities?.[0]?.id}/${selectedArea?.[0]?.id}/gis`);
+          setAreaGis(response.data);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+    };
 
-
-  console.log(items, 'gis22')
+    fetch();
+  }, [selectedArea]);
 
   return (
     <>
@@ -112,6 +153,10 @@ function MapLeaflet(props: MapLeafletProps) {
             )
           )
         ))
+      ) : null}
+
+      {polygon.length > 0 ? (
+        <Polygon positions={polyg as LatLngExpression[]} color="blue"/>
       ) : null}
     </>
   )
