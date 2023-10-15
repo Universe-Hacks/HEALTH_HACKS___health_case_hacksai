@@ -17,7 +17,7 @@ function Home() {
     display: 'flex',
     alignItems: 'center',
     color: '#fff',
-    height: 100,
+    height: '100px',
     paddingInline: 50,
     lineHeight: '64px',
     backgroundColor: '#eaeeef',
@@ -88,8 +88,6 @@ function Home() {
   const contentStyle: React.CSSProperties = {
     textAlign: 'center',
     display: 'flex',
-    alignItems: 'center',
-    lineHeight: '120px',
     paddingInline: 50,
     color: '#fff',
     width: '550px',
@@ -154,7 +152,7 @@ function Home() {
           <Layout hasSider>
             <Content style={contentStyle}>
               {selectedCities || selectedArea ? (
-                <MapContainer center={[56.839104, 60.60825]} zoom={16}>
+                <MapContainer center={[56.839104, 60.60825]} zoom={12}>
                   <MapLeaflet
                     selectedCities={selectedCities}
                     selectedArea={selectedArea as Area[]}
