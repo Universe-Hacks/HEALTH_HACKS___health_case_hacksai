@@ -1,5 +1,5 @@
 import "leaflet/dist/leaflet.css";
-import {Marker, Polygon, Popup, TileLayer, useMapEvent} from "react-leaflet";
+import {Marker, Polygon, TileLayer, useMapEvent} from "react-leaflet";
 import {useEffect, useState} from "react";
 import {Area, DataCities, Gis} from "../../pickerCity/types";
 import axios from "axios";
@@ -113,6 +113,13 @@ function MapLeaflet(props: MapLeafletProps) {
     fetch();
   }, [selectedArea]);
 
+
+  const filteredTags = items?.map(city => {
+    return city.tags
+  })
+
+  console.log(filteredTags, 'filteredTags')
+
   return (
     <>
       <TileLayer
@@ -127,7 +134,6 @@ function MapLeaflet(props: MapLeafletProps) {
               position={[city.coordinate.latitude, city.coordinate.longitude]}
               icon={greenIcon}
             >
-              {city.object_type}
             </Marker>
           ) : (
             city.object_type === 'study' ? (
@@ -136,9 +142,6 @@ function MapLeaflet(props: MapLeafletProps) {
                 position={[city.coordinate.latitude, city.coordinate.longitude]}
                 icon={blueIcon}
               >
-                <Popup>
-                  {city.object_type}
-                </Popup>
               </Marker>
             ) : (
               <Marker
@@ -146,9 +149,6 @@ function MapLeaflet(props: MapLeafletProps) {
                 position={[city.coordinate.latitude, city.coordinate.longitude]}
                 icon={redIcon}
               >
-                <Popup>
-                  {city.object_type}
-                </Popup>
               </Marker>
             )
           )

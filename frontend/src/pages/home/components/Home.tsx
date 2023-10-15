@@ -165,7 +165,6 @@ function Home() {
               selectedArea={selectedArea as Area[]}
             />
           </Layout>
-
         </>
       ) : null}
       <Footer style={footerStyle}>
